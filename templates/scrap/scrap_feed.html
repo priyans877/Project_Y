@@ -2,8 +2,8 @@
 
 {% block scrapform %}
 
-<p>Kindly Fill These Details For Scraping Results</p>
-            <form action="/scrap/results" method="post">
+            <p>Kindly Fill These Details For Scraping Results</p>
+            <form action="{% url 'feed' %}" method="POST">
                {% csrf_token %}
                 <div class="mb-3">
                     <label for="name" class="form-label">Starting RollNo</label>
