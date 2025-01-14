@@ -1,0 +1,22 @@
+{% extends "scrap/base.html" %}
+{% load static %}
+{% block sresult_static %}
+
+.custom {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 200; 
+}
+{% endblock %}
+
+{% block scraping %}
+        
+        <div class="flex items-center space-x-4">
+            <img src="{{ image }}" alt="Logo" class="h-10 w-10 rounded-lg object-cover custom"  width="50%" height="100">
+        </div>
+        <form action = '' method="POST">
+            <button type="button" class="btn btn-primary" onclick="window.location.href = '' ">Submit</button>
+        </form>
+
+{% endblock %}

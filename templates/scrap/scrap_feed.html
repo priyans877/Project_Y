@@ -1,0 +1,35 @@
+{% extends "scrap/base.html" %}
+
+{% block scrapform %}
+
+<p>Kindly Fill These Details For Scraping Results</p>
+            <form action="/scrap/results" method="post">
+               {% csrf_token %}
+                <div class="mb-3">
+                    <label for="name" class="form-label">Starting RollNo</label>
+                    <input type="text" class="form-control" id="name"  name = 'start_roll' placeholder="Enter your name">
+                </div>
+                <div class="mb-3">
+                    <label for="subject" class="form-label">End RollNo</label>
+                    <input type="text" class="form-control" id="subject" name = 'end_roll' placeholder="Enter your subject">
+                </div>
+                <div class="mb-3">
+                    <label for="semester" class="form-label">Semester</label>
+                    <select class="form-control" id="semester" name="semester">
+                        <option value="">--Select Semester--</option>
+                        <option value="01">First Semester</option>
+                        <option value="02">Second Semester</option>
+                        <option value="03">Third Semester</option>
+                        <option value="04">Fourth Semester</option>
+                        <option value="05">Fifth Semester</option>
+                        <option value="06">Sixth Semester</option>
+                        <option value="07">Seventh Semester</option>
+                        <option value="08">Eighth Semester</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-success" onclick  = "window.location.href='scrap/results'">Submit</button>
+            </form>
+
+
+{% endblock %}
