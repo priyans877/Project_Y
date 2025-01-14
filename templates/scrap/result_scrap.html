@@ -1,19 +1,20 @@
 {% extends "scrap/base.html" %}
 {% load static %}
+
 {% block sresult_static %}
 
 .custom {
-    display: flex;
-    justify-content: center; 
-    align-items: center; 
-    height: 200; 
+  display: FLEX;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
-{% endblock %}
 
+
+{% endblock %}
 {% block scraping %}
         
         <div class="flex items-center space-x-4">
-            <img src="{{ image }}" alt="Logo" class="h-10 w-10 rounded-lg object-cover custom"  width="50%" height="100">
+            <img src="https://jcboseustymca.co.in/Handler/GenerateCaptchaImage.ashx" alt="Logo" class="h-10 w-50 rounded-lg object-cover custom">
         </div>
         <form action = '' method="POST">
             <button type="button" class="btn btn-primary" onclick="window.location.href = '' ">Submit</button>
