@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 
 class form_data(models.Model):
+    id = models.AutoField(primary_key=True)
     captcha = models.ImageField(upload_to='images/')
     roll_no = models.CharField(max_length=50)
     semester = models.CharField(max_length=50)

@@ -2,23 +2,76 @@
 {% load static %}
 
 {% block sresult_static %}
-
-.custom {
-  display: FLEX;
-  margin: 0 auto;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-
-
+<style>
+    .custom {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .custom-blend {
+        mix-blend-mode: multiply;
+        background-color: transparent;
+    }
+</style>
 {% endblock %}
-{% block scraping %}
-        {% for image in images %}
-        <div class="flex items-center space-x-4">
-            <img src="{% images.url %}" alt="Logo" class="h-10 w-50 rounded-lg object-cover custom">
-        </div>
-        {% endfor %}
-        <form action = '' method="POST">
-            <button type="button" class="btn btn-primary" onclick="window.location.href = '' ">Submit</button>
-        </form>
 
+{% block scraping %}
+<div class="space-y-6">
+    <div class="flex flex-col items-center space-y-4">
+        <h1 class="text-2xl font-bold text-gray-800">Current Roll No: {{ current_roll }}</h1>
+        <div class="p-2 bg-blue-100 rounded-lg flex justify-center">
+            <img src="{{ form_data.captcha.url }}" alt="Captcha" class="h-10 w-50 rounded-lg object-cover mx-auto custom custom-blend">
+        </div>
+    </div>
+    
+    <div id="message-area" class="alert" style="display: none;"></div>
+    
+    <form id="captcha-form" onsubmit="submitCaptcha(event)">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="subject" class="form-label">Enter The Captcha</label>
+            <input type="text" class="form-control" id="subject" name="captcha_value" required>
+        </div>
+        <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+</div>
+
+<script>
+  function submitCaptcha(event) {
+      event.preventDefault();
+      
+      const form = event.target;
+      const formData = new FormData(form);
+      
+      fetch('/scrap/submit-captcha/', {
+          method: 'POST',
+          body: formData,
+          headers: {
+              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+          }
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.status === 'success') {
+              // Redirect to the URL for the next roll number
+              window.location.href = data.redirect_url;
+          } else if (data.status === 'completed') {
+              window.location.href = '/scrap/';  // Return to home
+          } else {
+              // Show error
+              const messageArea = document.getElementById('message-area');
+              messageArea.textContent = data.message;
+              messageArea.style.display = 'block';
+              messageArea.className = 'alert alert-danger';
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          const messageArea = document.getElementById('message-area');
+          messageArea.textContent = 'An error occurred. Please try again.';
+          messageArea.style.display = 'block';
+          messageArea.className = 'alert alert-danger';
+      });
+  }
+  </script>
 {% endblock %}

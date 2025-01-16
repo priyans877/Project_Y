@@ -7,16 +7,16 @@
                {% csrf_token %}
                 <div class="mb-3">
                     <label for="name" class="form-label">Starting RollNo</label>
-                    <input type="text" class="form-control" id="name"  name = 'start_roll' placeholder="Enter your name">
+                    <input type="text" class="form-control" id="name"  name = 'start_roll' placeholder="Enter your name" value = "21011018001">
                 </div>
                 <div class="mb-3">
                     <label for="subject" class="form-label">End RollNo</label>
-                    <input type="text" class="form-control" id="subject" name = 'end_roll' placeholder="Enter your subject">
+                    <input type="text" class="form-control" id="subject" name = 'end_roll' placeholder="Enter your subject" value ="21011018002" >
                 </div>
                 <div class="mb-3">
                     <label for="semester" class="form-label">Semester</label>
-                    <select class="form-control" id="semester" name="semester">
-                        <option value="">--Select Semester--</option>
+                    <select class="form-control" id="semester" name="semester" value = "06">
+                        <option value="06">--Select Semester--</option>
                         <option value="01">First Semester</option>
                         <option value="02">Second Semester</option>
                         <option value="03">Third Semester</option>
