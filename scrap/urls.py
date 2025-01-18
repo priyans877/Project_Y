@@ -8,8 +8,9 @@ from . import views
 urlpatterns = [
     path('scrap/', views.home, name='home'),
     path('scrap/feed/', views.scraper_feed, name='feed'),
-    path('scrap/results/<slug:start_s>/<slug:end_s>/<slug:semester>/', views.run_scraper, name='results'),
-    path('scrap/submit-captcha/', views.submit_captcha, name='submit_captcha'),  # New URL for captcha submission
+    path('scrap/results/<slug:start_s>/<slug:end_s>/<slug:semester>/<slug:batch>/<slug:branch>', views.run_scraper, name='results'),
+    path('scrap/submit-captcha/', views.submit_captcha, name='submit_captcha'),# New URL for captcha submission
+    path('' , views.json_trial , name = "Json_trial"),
 ]
 
 

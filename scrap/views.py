@@ -4,9 +4,15 @@ from django.core.files.base import ContentFile
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
-from .models import form_data
+from .models import form_data , trail_json
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+import json
+import os
+from django.conf import settings
+
+# Path to the media directory
+media_path = settings.MEDIA_ROOT
 
 driver = None
 
@@ -29,6 +35,9 @@ def scraper_feed(request):
         param_start = request.POST['start_roll']
         param_end = request.POST['end_roll']
         param_semester = request.POST['semester']
+        param_batch = request.POST['batch']
+        param_branch = request.POST['branch']
+   
         
         # Initialize the scraping session
         request.session['scraping_params'] = {
@@ -36,15 +45,17 @@ def scraper_feed(request):
             'end_roll': param_end,
             'semester': param_semester,
             'current_roll': param_start,
+            'branch' : param_branch,
+            'batch' : param_batch,
             'form_filled': False  # Track if we've filled the form
         }
         
-        return redirect('results', start_s=param_start, end_s=param_end, semester=param_semester)
+        return redirect('results', start_s=param_start, end_s=param_end, semester=param_semester , batch =param_batch , branch=param_branch)
     return render(request, 'scrap/scrap_feed.html')
 
 driver = None
 
-def run_scraper(request, start_s, end_s, semester):
+def run_scraper(request, start_s, end_s, semester , batch , branch):
     global driver
     
     # Get current roll number from session
@@ -93,6 +104,8 @@ def run_scraper(request, start_s, end_s, semester):
         'roll_no': current_roll,  # Changed from start_s to current_roll
         'end_roll': end_s,
         'semester': semester,
+        'batch' : batch,
+        'branch' : branch,
         'form_entry_id': form_entry.id
     }
     
@@ -103,6 +116,11 @@ def run_scraper(request, start_s, end_s, semester):
         'current_roll': current_roll,  # Changed from start_s to current_roll
         'image_url': image_url
     })
+
+
+
+ 
+
 
 @require_POST
 def submit_captcha(request):
@@ -124,62 +142,74 @@ def submit_captcha(request):
         captcha_input.clear()
         captcha_input.send_keys(captcha_value)
         
-        # Submit form
+        
         submit_button = driver.find_element(By.ID, "btnResult")
         submit_button.click()
         
-        try:
-            print(driver.find_element(By.ID , "lblmessage").text)
-            print("Own Try condition")
-            next_roll = str(int(current_state['roll_no']) + 1)
-            print("Next New Roll No : ", next_roll)
-            if int(next_roll) >= int(current_state['end_roll']):
-                driver.quit()
-                driver = None
-                return JsonResponse({'status': 'completed'})
-            
-            # Update session with new roll number
-            current_state['roll_no'] = next_roll
-            request.session['current_state'] = current_state
-            request.session.modified = True  # Force session update
-            return JsonResponse({'status': 'error', 'message': str(e)})
+    
+        print("================================================")
+        print(len(driver.window_handles))
+        print(driver.title)
         
-        except:  
-            print("================================================")
-            print(len(driver.window_handles))
-            print(driver.title)
+        print("-----------------------------------------------")
+        driver.switch_to.window(driver.window_handles[1])
+        print(driver.title)
+        print("-----------------------------------------------")
+        
+        
+        def data_save(current_state, page_s):
+            batch = current_state['batch']
+            branch = current_state['branch']
+            roll_no = current_state['roll_no']
             
-            print("-----------------------------------------------")
-            driver.switch_to.window(driver.window_handles[1])
-            print(driver.title)
-            print("-----------------------------------------------")
+            print(f"Data saved for Roll No: {roll_no}, Batch: {batch}, Branch: {branch}")
+        
+        def image_rename(id , captcha_value):
+            form = form_data.objects.get(id=id)
+            
+            old_file_path = os.path.join(media_path , f"{form.captcha}")
+            
+            new_file_name = f"{captcha_value}.png"  # Make sure to 
+            new_file_path = os.path.join(os.path.dirname(old_file_path), new_file_name)
+            os.rename(old_file_path, new_file_path)
+            
+            form.captcha = f"images/{captcha_value}.png"
+            form.save()
+    
+                        
+                
+            
+        if len(driver.window_handles)==3:
             driver.switch_to.window(driver.window_handles[2])
             print(driver.title)
+            
+            data_save(current_state , driver.page_source)
+            image_rename(current_state['form_entry_id'], captcha_value)
+            
             print("================================================")
             
-            with open("C:/Users/pk877/Desktop/ProjectY/Main/scrap/tempfile/temp_code.html" , 'a' ) as f:
-                f.write(driver.page_source)            
-            # Process result page he
-            # Update roll number
-            
-            next_roll = str(int(current_state['roll_no']) + 1)
-            print("Next New Roll No : ", next_roll)
-            if int(next_roll) >= int(current_state['end_roll']):
-                driver.quit()
-                driver = None
-                return JsonResponse({'status': 'completed'})
-            
-            # Update session with new roll number
-            current_state['roll_no'] = next_roll
-            request.session['current_state'] = current_state
-            request.session.modified = True  # Force session update
-            
-            # Close extra windows and prepare for next roll
-            driver.close()
-            driver.switch_to.window(driver.window_handles[1])
-            driver.close()
-            driver.switch_to.window(driver.window_handles[0])
+            driver.close()       
+                   
+        # Process result page he
+        # Update roll number
         
+        next_roll = str(int(current_state['roll_no']) + 1)
+        print("Next New Roll No : ", next_roll)
+        if int(next_roll) >= int(current_state['end_roll']):
+            driver.quit()
+            driver = None
+            return JsonResponse({'status': 'completed'})
+        
+        # Update session with new roll number
+        current_state['roll_no'] = next_roll
+        request.session['current_state'] = current_state
+        request.session.modified = True  # Force session update
+        
+        # Close extra windows and prepare for next roll
+        driver.switch_to.window(driver.window_handles[1])
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
+    
         # Return success with next roll number
         return JsonResponse({
             'status': 'success', 
@@ -188,4 +218,36 @@ def submit_captcha(request):
         })
         
     except Exception as e:
+        print("InLast exception")
         return JsonResponse({'status': 'error', 'message': str(e)})
+    
+    
+    
+
+
+
+
+
+def json_trial(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        roll_no = request.POST.get('roll')
+        json_data_str = request.POST.get('json_data')  # Fix the name to match the form
+
+        try:
+            # Parse JSON data
+            json_data = json.loads(json_data_str)
+            
+            # Save to the database
+            trail_json_instance = trail_json.objects.create(
+                name=name,
+                roll_no=roll_no,
+                result=json_data
+            )
+
+            print(name, roll_no, json_data)
+            return JsonResponse({'message': 'Data saved successfully!', 'id': trail_json_instance.id})
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+
+    return render(request, "scrap/trail_json.html")

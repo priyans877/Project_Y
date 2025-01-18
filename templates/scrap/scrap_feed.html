@@ -10,13 +10,17 @@
                     <input type="text" class="form-control" id="name"  name = 'start_roll' placeholder="Enter your name" value = "21011018001">
                 </div>
                 <div class="mb-3">
-                    <label for="subject" class="form-label">End RollNo</label>
-                    <input type="text" class="form-control" id="subject" name = 'end_roll' placeholder="Enter your subject" value ="21011018002" >
+                    <label for="RollNo" class="form-label">End RollNo</label>
+                    <input type="text" class="form-control" id="RollNo" name = 'end_roll' placeholder="Enter your subject" value ="21011018002" >
+                </div>
+                <div class="mb-3">
+                    <label for="subject" class="form-label">Batch (Year)</label>
+                    <input type="text" class="form-control" id="subject" name='batch' placeholder="Enter Batch(If 21-25 then Type 21 only|For Leet 21L)" value ="21" >
                 </div>
                 <div class="mb-3">
                     <label for="semester" class="form-label">Semester</label>
-                    <select class="form-control" id="semester" name="semester" value = "06">
-                        <option value="06">--Select Semester--</option>
+                    <select class="form-control" id="semester" name="semester" value = "">
+                        <option value="03">--Select Semester--</option>
                         <option value="01">First Semester</option>
                         <option value="02">Second Semester</option>
                         <option value="03">Third Semester</option>
@@ -27,7 +31,21 @@
                         <option value="08">Eighth Semester</option>
                     </select>
                 </div>
-                
+                <div class="mb-3">
+                    <label for="branch_s" class="form-label">Branchr</label>
+                    <select class="form-control" id="branch_s" name="branch" value = "06">
+                        <option value="cse_aiml">--Select Semester--</option>
+                        <option value="cse_gen">CSE (GEN)</option>
+                        <option value="cse_aiml">CSE (AIML)</option>
+                        <option value="bca_ds">BCA (DS)</option>
+                        <option value="bca_gen">BCA (GEN)</option>
+                        <option value="mecha">Mechanicle</option>
+                        <option value="civil">Civil</option>
+                        <option value="mba">MBA</option>
+                        <option value="bba_gen">BBA (GEN)</option>
+                        <option value="bba_f">BBA (F)</option>
+                    </select>
+                </div>
                 <button type="submit" class="btn btn-success" onclick  = "window.location.href='scrap/results'">Submit</button>
             </form>
 

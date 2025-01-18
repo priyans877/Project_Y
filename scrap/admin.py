@@ -1,6 +1,7 @@
 from django.contrib import admin
-from .models import form_data
+from .models import *
 
 # Register your models here.
 
 admin.site.register(form_data)
+admin.site.register(trail_json)

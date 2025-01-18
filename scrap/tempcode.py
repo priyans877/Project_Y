@@ -144,3 +144,40 @@ def run_scraper(request, start_s, end_s, semester):
         'image_url' :image_url
     })
         
+        
+        
+# try of 
+
+try:
+            print("Helloooo in Try")
+            elemnt  = driver.find_element(By.ID , "lblMessage").text
+            print("Own Try condion :", elemnt )
+            
+            temp_roll = driver.find_element(By.ID , "txtRollNo").get_attribute("value")
+            temp_sem = driver.find_element(By.ID, 'ddlSem').get_attribute("value")
+            print(temp_roll , temp_sem)
+            
+            driver.get("https://jcboseustymca.co.in/Handler/GenerateCaptchaImage.ashx")
+
+            next_roll = str(int(current_state['roll_no']) + 1)
+            print("Next New Roll No : ", next_roll)
+            if int(next_roll) >= int(current_state['end_roll']):
+                driver.quit()
+                driver = None
+                return JsonResponse({'status': 'completed'})
+            
+            
+            # Update session with new roll number
+            current_state['roll_no'] = next_roll
+            request.session['current_state'] = current_state
+            request.session.modified = True  # Force session update
+            # print(len(driver.window_handles))
+            # print(driver.title)
+            # Return success with next roll number
+            return JsonResponse({
+                'status': 'success', 
+                'next_roll': next_roll,
+                'redirect_url': f'/scrap/results/{next_roll}/{current_state["end_roll"]}/{current_state["semester"]}/'
+            })
+            
+            
