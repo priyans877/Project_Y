@@ -177,7 +177,6 @@ def submit_captcha(request):
             form.save()
     
                         
-                
             
         if len(driver.window_handles)==3:
             driver.switch_to.window(driver.window_handles[2])
