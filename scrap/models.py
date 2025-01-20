@@ -14,11 +14,6 @@ class form_data(models.Model):
 class trail_json(models.Model):
     s_name = models.CharField(max_length=50)
     roll_no = models.CharField(max_length=50)
-    f_name = models.CharField(max_length = 75)
-    m_name = models.CharField(max_length=50)
-    category = models.CharField(max_length = 75)
-    sgpa = models.CharField(max_length = 100)
-    cgpa =  models.CharField(max_length = 50)
     # re_count = models.IntegerField(max_length = 20)
     result = JSONField()
     
@@ -29,6 +24,6 @@ class result(models.Model):
     m_name = models.CharField(max_length=50)
     category = models.CharField(max_length = 75)
     sgpa = models.CharField(max_length = 100)
-    cgpa =  models.CharField(max_length = 50)
-    re_count = models.IntegerField(max_length = 20)
-    result = JSONField()
+    cgpa =  models.CharField(max_length = 50, blank=True , null = True )
+    re_count = models.CharField(max_length=50)
+    result_s = JSONField()

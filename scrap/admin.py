@@ -5,3 +5,4 @@ from .models import *
 
 admin.site.register(form_data)
 admin.site.register(trail_json)
+admin.site.register(result)
