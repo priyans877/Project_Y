@@ -1,7 +1,7 @@
 {% extends "scrap/base.html" %}
 
 {% block scrapform %}
-
+  <h1>{{ request.user}}</h1>
             <p>Kindly Fill These Details For Scraping Results</p>
             <form action="{% url 'feed' %}" method="POST">
                {% csrf_token %}
@@ -47,7 +47,7 @@
                     </select>
                 </div>
                 <button type="submit" class="btn btn-success" onclick  = "window.location.href='scrap/results'">Submit</button>
-            </form>
+            </form> 
 
 
 {% endblock %}

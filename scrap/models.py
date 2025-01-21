@@ -1,8 +1,10 @@
 from django.db import models
 from django.db.models import JSONField
+from django.contrib.auth.models import User
 # Create your models here.
 
 class form_data(models.Model):
+    user = models.ForeignKey(User , on_delete = models.CASCADE , null = True)
     id = models.AutoField(primary_key=True)
     captcha = models.ImageField(upload_to='images/')
     roll_no = models.CharField(max_length=50)
@@ -18,6 +20,7 @@ class trail_json(models.Model):
     result = JSONField()
     
 class result(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE , null=True)
     s_name = models.CharField(max_length=50)
     roll_no = models.CharField(max_length=50)
     f_name = models.CharField(max_length = 75)
@@ -27,3 +30,7 @@ class result(models.Model):
     cgpa =  models.CharField(max_length = 50, blank=True , null = True )
     re_count = models.CharField(max_length=50)
     result_s = JSONField()
+    
+    def __str__(self):
+        return f"{self.s_name}_{self.category}"
+    

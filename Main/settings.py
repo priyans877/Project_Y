@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from django.contrib.messages import constants as messages
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_ROOT = os.path.join(BASE_DIR, 'Main', 'media') 
@@ -38,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'scrap.apps.ScrapConfig',
+    'data.apps.DataConfig',
+    'home.apps.HomeConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -48,9 +53,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'account.middleware.AutoLogoutMiddleware',
+
 ]
 
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+LOGIN_URL = 'login'
 ROOT_URLCONF = 'Main.urls'
+SESSION_COOKIE_AGE = 600  # 3 minutes
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+ 
 
 TEMPLATES = [
     {
@@ -101,6 +114,13 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -118,10 +138,16 @@ import os
 
 STATIC_URL = 'static/'
 
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+MESSAGE_TAGS = {
+    messages.ERROR : 'danger'
+}
