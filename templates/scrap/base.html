@@ -62,10 +62,10 @@
                     <a class="nav-link" href="/data/">Datasets</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/data/logout">Log out</a>
+                    <a class="nav-link" href="/auth/logout/">Log out</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="scrap/results">Scrape Data</a>
+                    <a class="nav-link" href="scrap/results">Scrap Data</a>
                 </li>
             </ul>
             <div class="mt-4">
@@ -83,6 +83,9 @@
                 {% endblock %}
 
                 {% block scraping %}
+                {% endblock %}
+
+                {% block data_home %}
                 {% endblock %}
             </div>
 

@@ -3,9 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout , authenticate
 from django.contrib.auth.models import User
 from django.contrib import messages
-from decorators import unauthorised
+from .decorators import unauthorised
 
 # Create your views here.
+
+
+# @unauthorised
 def register_page(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -35,7 +38,7 @@ def register_page(request):
                
     return render(request, 'account/register.html')
     
-@
+# @unauthorised
 def login_page(request):
     if request.method == 'POST':
         username = request.POST.get('username')

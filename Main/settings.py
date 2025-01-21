@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'data.apps.DataConfig',
     'home.apps.HomeConfig',
     'rest_framework',
+    'account',
 ]
 
 MIDDLEWARE = [

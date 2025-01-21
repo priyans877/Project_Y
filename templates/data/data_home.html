@@ -1,0 +1,61 @@
+{% extends "scrap/base.html" %}
+
+{% block data_home %}
+            {% for message in messages %} 
+            <div class="alert alert-{{ message.tags}} alert-dismissible fade show " role="alert">
+            <strong>Hey Hey!</strong> {{ message }}.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            {% endfor %}
+            <p>Kindly Fill These Details For Scraping Results</p>
+            <form  method="POST">
+               {% csrf_token %}
+                <div class="mb-3">
+                    <label for="name" class="form-label">Enter Year Of Batch</label>
+                    <input type="text" class="form-control" id="name"  name = 'year' placeholder="Enter your Batch year 2021-2025 as 21 | 21 for Leet 2022-2025 " >
+                </div>
+                <div class="mb-3">
+                    <label for="semester" class="form-label">Semester</label>
+                    <select class="form-control" id="semester" name="semester" value = "">
+                        <option value="">--Select Semester--</option>
+                        <option value="01">First Semester</option>
+                        <option value="02">Second Semester</option>
+                        <option value="03">Third Semester</option>
+                        <option value="04">Fourth Semester</option>
+                        <option value="05">Fifth Semester</option>
+                        <option value="06">Sixth Semester</option>
+                        <option value="07">Seventh Semester</option>
+                        <option value="08">Eighth Semester</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="branch_s" class="form-label">Branch</label>
+                    <select class="form-control" id="branch_s" name="branch">
+                        <option value="cse_aiml">--Select Semester--</option>
+                        <option value="cse_gen">CSE (GEN)</option>
+                        <option value="cse_aiml">CSE (AIML)</option>
+                        <option value="bca_ds">BCA (DS)</option>
+                        <option value="bca_gen">BCA (GEN)</option>
+                        <option value="mecha">Mechanicle</option>
+                        <option value="civil">Civil</option>
+                        <option value="mba">MBA</option>
+                        <option value="bba_gen">BBA (GEN)</option>
+                        <option value="bba_f">BBA (F)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success" onclick  = "window.location.href=''">Submit</button>
+            </form> 
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                $('.alert').alert()
+                })
+            </script> 
+
+            
+{% endblock  %}}
+
+
