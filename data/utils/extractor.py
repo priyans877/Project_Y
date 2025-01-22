@@ -6,7 +6,7 @@ import json
 
 
 
-def excle_convertor(data, customer):
+def excle_convertor(data, customer ,branch , year , semester_s ,category):
     # Create an in-memory bytes buffer
     buffer = BytesIO()
 
@@ -123,8 +123,22 @@ def excle_convertor(data, customer):
     buffer.seek(0)
     
     # Create a Django model instance and save the file
-    excel_file = excle_model(user=customer)
-    excel_file.file.save('result_sheet2.xlsx', ContentFile(buffer.read()))
-    buffer.close()
-    print("Excel file created and saved to database successfully!")
+    excel_file = excle_model.objects.filter(user_id=customer , file = f"excel_files/{category}.xlsx")
+    print(customer)
+    
+    
+    if excel_file.exists():
+        print("FIle Already Exists")
+    
+    else:
+        excel_file = excle_model(user_id =customer , branch = branch , year = year , semester = semester_s)
+        excel_file.file.save(f"{category}.xlsx", ContentFile(buffer.read()))
+        buffer.close()
+        print("Excel file created and saved to database successfully!")\
+    
+        
+    return excel_file
+
+
+
     
