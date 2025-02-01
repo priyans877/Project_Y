@@ -30,8 +30,8 @@ def register_page(request):
                 messages.error(request, 'Username already exists , Kindly Log In')
              
                 # return render(request, 'account/register.html')   
-            elif email not in "@acem.edu.in":
-                messages.error(request , 'Kinldy register with College MailID')
+            # elif email not in "@acem.edu.in":
+            #     messages.error(request , 'Kinldy register with College MailID')
 
             else:
                 user = User.objects.create(
