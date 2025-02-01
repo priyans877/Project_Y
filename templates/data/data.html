@@ -1,0 +1,216 @@
+
+
+{% extends "scrap/base.html" %}
+
+
+{% block data_html %}
+<style>
+    /* Custom animations */
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+    @keyframes float-delay {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(20px); }
+    }
+    @keyframes text {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    .animate-float-delay { animation: float-delay 6s ease-in-out infinite; }
+    .animate-text { background-size: 200% auto; animation: text 5s linear infinite; }
+</style>
+{% endblock %}
+
+{% block data_view %}
+<div class="min-h-screen flex items-center justify-center bg-white p-4">
+    <div class="bg-white/50 backdrop-blur-lg rounded-3xl shadow-2xl p-6 max-w-4xl w-full border border-white/20 relative overflow-hidden">
+        
+        <div class="absolute inset-0 z-0">
+            <div class="absolute w-64 h-64 bg-purple-500/20 rounded-full blur-3xl -top-32 -left-32 animate-float"></div>
+            <div class="absolute w-64 h-64 bg-blue-500/20 rounded-full blur-3xl -bottom-32 -right-32 animate-float-delay"></div>
+        </div>
+
+        <!-- Header -->
+        <div class="text-center mb-4 relative z-10">
+            <div class="flex justify-center items-center mb-6">
+                <a id="downloadButton"
+                   href="#"
+                   class="px-6 py-3 text-white bg-gray-400 rounded-lg shadow font-semibold transition-transform transform cursor-not-allowed"
+                   disabled>
+                   Download
+                </a>
+            </div>
+            <h2 class="text-4xl font-bold text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-500 animate-text">
+                Available Data
+            </h2>
+            <div class="selector-container">
+                <div style="margin-bottom: 10px; display: flex; gap: 10px;">
+                    <!--* Semester Selector *-->
+                    <select
+                        id="semesterSelector"
+                        name="selected_sem"
+                        class="custom-select"
+                        hx-include="[name='selected_year'],[name='selected_branch']"
+                        hx-get="/profile/data/"
+                        hx-trigger="change"
+                        hx-target="#datax"
+                        hx-swap="innerHTML"
+                    >
+                        <option value="">Select Semester</option>
+                        {% for soption in sem_options %}
+                            <option value="{{ soption }}">{{ soption }}</option>
+                        {% endfor %}
+                    </select>
+               
+                    <!--* Year Selector *-->
+                    <select
+                        id="yearSelector"
+                        name="selected_year"
+                        class="custom-select"
+                        hx-include="[name='selected_sem'],[name='selected_branch']"
+                        hx-get="/profile/data/"
+                        hx-trigger="change"
+                        hx-target="#datax"
+                        hx-swap="innerHTML"
+                    >
+                        <option value="">Select Year</option>
+                        {% for option in year_options %}
+                            <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+               
+                    <!--* Branch Selector *-->
+                    <select
+                        id="branchSelector"
+                        name="selected_branch"
+                        class="custom-select"
+                        hx-include="[name='selected_sem'],[name='selected_year']"
+                        hx-get="/profile/data/"
+                        hx-trigger="change"
+                        hx-target="#datax"
+                        hx-swap="innerHTML"
+                    >
+                        <option value="">Select Branch</option>
+                        {% for option in branch_options %}
+                            <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div id="datax" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% include "home/data_chart.html" %}
+            </div>
+            
+            <!-- Button -->
+            
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts_data%}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get references to dropdowns and button
+        const semesterSelector = document.getElementById("semesterSelector");
+        const yearSelector = document.getElementById("yearSelector");
+        const branchSelector = document.getElementById("branchSelector");
+        const downloadButton = document.getElementById("downloadButton");
+
+        // Function to format the semester
+        function formatSemester(semester) {
+            // Convert semester to lowercase and trim whitespace
+            const sem = semester.toString().toLowerCase().trim();
+            
+            const semesterMap = {
+                'first semester': '01',
+                'second semester': '02',
+                'third semester': '03',
+                'fourth semester': '04',
+                'fifth semester': '05',
+                'sixth semester': '06',
+                'seventh semester': '07',
+                'eighth semester': '08'
+            };
+            console.log(sem)
+            return semesterMap[sem];
+        }
+        
+
+        // Function to generate the slug (joining semester, year, branch with "_")
+        function generateSlug(branch ,year , semester) {
+            // Format semester
+            const formattedSemester = formatSemester(semester);
+            
+            // Join the values with "_"
+            return `${branch}_${year}_${formattedSemester}`.toLowerCase().replace(/\s+/g, '-');  // Convert to lowercase and replace spaces with hyphens
+        }
+
+        // Function to check if all dropdowns have a value
+        function checkInputs() {
+            // Check if all dropdowns have a selected value
+            if (
+                semesterSelector.value !== "" &&
+                yearSelector.value !== "" &&
+                branchSelector.value !== ""
+            ) {
+                // Enable the download button and set its URL
+                downloadButton.disabled = false;
+                downloadButton.classList.remove("bg-gray-400", "cursor-not-allowed");
+                downloadButton.classList.add(
+                    "bg-gradient-to-r",
+                    "from-purple-600",
+                    "to-blue-500",
+                    "hover:shadow-xl",
+                    "hover:scale-105"
+                );
+
+                // Generate the slug and update the href of the download button
+                const fileName = generateSlug( branchSelector.value , yearSelector.value ,semesterSelector.value);
+                downloadButton.href = `/profile/data/download/${fileName}`;
+
+                console.log(`Generated Download Link: /download/${fileName}`);
+            } else {
+                // Disable the download button if any dropdown is not selected
+                downloadButton.disabled = true;
+                downloadButton.classList.add("bg-gray-400", "cursor-not-allowed");
+                downloadButton.classList.remove(
+                    "bg-gradient-to-r",
+                    "from-purple-600",
+                    "to-blue-500",
+                    "hover:shadow-xl",
+                    "hover:scale-105"
+                );
+            }
+        }
+
+        // Attach event listeners to dropdowns to trigger checkInputs on change
+        semesterSelector.addEventListener("change", checkInputs);
+        yearSelector.addEventListener("change", checkInputs);
+        branchSelector.addEventListener("change", checkInputs);
+
+        // Initial check when the page loads
+        checkInputs();
+
+        // Trigger checkInputs after HTMX content swap (in case new data is loaded dynamically)
+        document.body.addEventListener('htmx:afterSwap', function () {
+            checkInputs();
+        });
+
+        // Add click listener to download button for debugging purposes
+        downloadButton.addEventListener('click', function (e) {
+            if (!downloadButton.disabled) {
+                console.log(`Button clicked, navigating to ${downloadButton.href}`);
+            } else {
+                console.log('Button is disabled, cannot click');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

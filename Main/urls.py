@@ -20,12 +20,15 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('home.urls')),
-    path("auth/", include('account.urls'), name="auth"),
-    path("data/", include('data.urls'), name="data"),
-    path("scrap/", include('scrap.urls'), name="scrap"),
+    path('auth/', include('account.urls'), name="auth"),
+    path('profile/data/', include('data.urls'), name="data"),
+    path('profile/scrap/', include('scrap.urls'), name="scrap"),
+    path('api/', include('api.urls'), name="api"),
+    path('under_development/', include('oops.urls'), name="under")
 ]
 
 

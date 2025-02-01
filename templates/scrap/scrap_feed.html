@@ -1,53 +1,143 @@
 {% extends "scrap/base.html" %}
 
+
+
+{% block style_feed %}
+<style>
+    <style>
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        @keyframes float-delay {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(20px); }
+        }
+        @keyframes text {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-float-delay { animation: float-delay 6s ease-in-out infinite; }
+        .animate-text { background-size: 200% auto; animation: text 5s linear infinite; }
+        .margins{
+            margin-up : -10px;
+            
+        }
+    </style>
+</style>
+{% endblock %}
+
+
 {% block scrapform %}
-  <h1>{{ request.user}}</h1>
-            <p>Kindly Fill These Details For Scraping Results</p>
-            <form action="{% url 'feed' %}" method="POST">
-               {% csrf_token %}
-                <div class="mb-3">
-                    <label for="name" class="form-label">Starting RollNo</label>
-                    <input type="text" class="form-control" id="name"  name = 'start_roll' placeholder="Enter your name" value = "21011018001">
-                </div>
-                <div class="mb-3">
-                    <label for="RollNo" class="form-label">End RollNo</label>
-                    <input type="text" class="form-control" id="RollNo" name = 'end_roll' placeholder="Enter your subject" value ="21011018002" >
-                </div>
-                <div class="mb-3">
-                    <label for="subject" class="form-label">Batch (Year)</label>
-                    <input type="text" class="form-control" id="subject" name='batch' placeholder="Enter Batch(If 21-25 then Type 21 only|For Leet 21L)" value ="21" >
-                </div>
-                <div class="mb-3">
-                    <label for="semester" class="form-label">Semester</label>
-                    <select class="form-control" id="semester" name="semester" value = "">
-                        <option value="03">--Select Semester--</option>
-                        <option value="01">First Semester</option>
-                        <option value="02">Second Semester</option>
-                        <option value="03">Third Semester</option>
-                        <option value="04">Fourth Semester</option>
-                        <option value="05">Fifth Semester</option>
-                        <option value="06">Sixth Semester</option>
-                        <option value="07">Seventh Semester</option>
-                        <option value="08">Eighth Semester</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="branch_s" class="form-label">Branchr</label>
-                    <select class="form-control" id="branch_s" name="branch" value = "06">
-                        <option value="cse_aiml">--Select Semester--</option>
-                        <option value="cse_gen">CSE (GEN)</option>
-                        <option value="cse_aiml">CSE (AIML)</option>
-                        <option value="bca_ds">BCA (DS)</option>
-                        <option value="bca_gen">BCA (GEN)</option>
-                        <option value="mecha">Mechanicle</option>
-                        <option value="civil">Civil</option>
-                        <option value="mba">MBA</option>
-                        <option value="bba_gen">BBA (GEN)</option>
-                        <option value="bba_f">BBA (F)</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-success" onclick  = "window.location.href='scrap/results'">Submit</button>
-            </form> 
+<div class="min-h-full flex items-center justify-center bg-white p-4">
+    <div class="bg-white/50 backdrop-blur-lg rounded-3xl shadow-2xl p-6 max-w-4xl w-full border border-white/20 relative overflow-hidden">
+        <!-- Mystical Background Elements -->
+        <div class="absolute inset-0 z-0">
+            <div class="absolute w-64 h-64 bg-purple-500/20 rounded-full blur-3xl -top-32 -left-32 animate-float"></div>
+            <div class="absolute w-64 h-64 bg-blue-500/20 rounded-full blur-3xl -bottom-32 -right-32 animate-float-delay"></div>
+        </div>
 
+        <!-- Header -->
+        <div class="text-center mb-4 relative z-10">
+            <h2 class="text-4xl font-bold text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-500 animate-text">
+                Result Scraper
+            </h2>
+            <p class="text-lg text-gray-600 mt-1">Fill in the details below to scrape results efficiently</p>
+        </div>
 
+        <!-- Form -->
+        <form action="{% url 'feed' %}" method="POST" class="space-y-3 relative z-10">
+            {% csrf_token %}
+
+            <!-- Roll Number Range -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-lg font-medium text-gray-700 mb-1">Starting Roll Number</label>
+                    <input type="text" name="start_roll" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white/50 backdrop-blur-sm" 
+                           value="21011018001" placeholder="e.g., 21011018001">
+                </div>
+                <div>
+                    <label class="block text-lg font-medium text-gray-700 mb-1">Ending Roll Number</label>
+                    <input type="text" name="end_roll" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white/50 backdrop-blur-sm" 
+                           value="21011018002" placeholder="e.g., 21011018002">
+                </div>
+            </div>
+
+            <!-- Batch Year -->
+            <div>
+                <label class="block text-lg font-medium text-gray-700 mb-1">Batch Year</label>
+                <input type="text" name="batch" 
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white/50 backdrop-blur-sm" 
+                       value="21" placeholder="Enter batch year (e.g., 21 for 2021-25 | 21L for LEET)">
+            </div>
+
+            <!-- Semester Selection -->
+            <div>
+                <label class="block text-lg font-medium text-gray-700 mb-1">Semester</label>
+                <select name="semester" 
+                        class="w-full px-4 py-2 border border-gray-300 bg-white/50 backdrop-blur-sm rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                    <option value="03">--Select Semester--</option>
+                    <option value="01">First Semester</option>
+                    <option value="02">Second Semester</option>
+                    <option value="03">Third Semester</option>
+                    <option value="04">Fourth Semester</option>
+                    <option value="05">Fifth Semester</option>
+                    <option value="06">Sixth Semester</option>
+                    <option value="07">Seventh Semester</option>
+                    <option value="08">Eighth Semester</option>
+                </select>
+            </div>
+
+            <!-- Branch Selection -->
+            <div>
+                <label class="block text-lg font-medium text-gray-700 mb-1">Branch</label>
+                <select name="branch" 
+                        class="w-full px-4 py-2 border border-gray-300 bg-white/50 backdrop-blur-sm rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                    <option value="cse_aiml">--Select Branch--</option>
+                    <option value="cse_gen">CSE (General)</option>
+                    <option value="cse_aiml">CSE (AI & ML)</option>
+                    <option value="bca_ds">BCA (Data Science)</option>
+                    <option value="bca_gen">BCA (General)</option>
+                    <option value="mech">Mechanical Engineering</option>
+                    <option value="civil">Civil Engineering</option>
+                    <option value="mba">MBA</option>
+                    <option value="bba_gen">BBA (General)</option>
+                    <option value="bba_f">BBA (Finance)</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+                <button type="submit" 
+                        class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                    Start Scraping
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Custom Animations -->
+<style>
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+    @keyframes float-delay {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(20px); }
+    }
+    @keyframes text {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    .animate-float { animation: float 6s ease-in-out infinite; }
+    .animate-float-delay { animation: float-delay 6s ease-in-out infinite; }
+    .animate-text { background-size: 200% auto; animation: text 5s linear infinite; }
+</style>
 {% endblock %}

@@ -36,7 +36,7 @@ def home(request):
         driver = None
     request.session.pop('current_state', None)
     
-    return render(request, 'scrap/base.html')
+    return redirect('/profile/dashboard/')
 
 
 @login_required(login_url='login')
@@ -360,7 +360,7 @@ def submit_captcha(request):
             'status': 'success', 
             'next_roll': next_roll,
             'batch' : current_state['batch'],
-            'redirect_url': f'/scrap/results/{next_roll}/{current_state["end_roll"]}/{current_state["semester"]}/{current_state['batch']}/{current_state['branch']}'
+            'redirect_url': f'/profile/scrap/results/{next_roll}/{current_state["end_roll"]}/{current_state["semester"]}/{current_state['batch']}/{current_state['branch']}'
         })
         
         

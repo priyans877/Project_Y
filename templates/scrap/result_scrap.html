@@ -15,63 +15,85 @@
 </style>
 {% endblock %}
 
-{% block scraping %}
-<div class="space-y-6">
-    <div class="flex flex-col items-center space-y-4">
-        <h1 class="text-2xl font-bold text-gray-800">Current Roll No: {{ current_roll }}</h1>
-        <div class="p-2 bg-blue-100 rounded-lg flex justify-center">
-            <img src="{{ form_data.captcha.url }}" alt="Captcha" class="h-10 w-50 rounded-lg object-cover mx-auto custom custom-blend">
+{% block scrapform %}
+<div class="relative min-h-screen bg-gradient-to-r from-indigo-900 via-purple-900 to-blue-900 flex items-center justify-center overflow-hidden">
+    <!-- Animated Background -->
+    <div class="absolute inset-0">
+        <div class="animate-pulse bg-gradient-to-t from-purple-700 via-transparent to-blue-700 w-[150%] h-[150%] rounded-full blur-3xl opacity-20 -translate-x-1/2 -translate-y-1/2"></div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="relative z-10 w-full max-w-4xl p-8 bg-white/10 backdrop-blur-lg shadow-2xl rounded-3xl border border-white/20">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h2 class="text-4xl font-extrabold text-white bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-yellow-500 animate-text">
+                 CAPTCHA Scraping 
+            </h2>
+            <p class="text-lg text-gray-200 mt-3">Enter the CAPTCHA to scrape results and proceed to the next roll number.</p>
+        </div>
+
+        <!-- Scraping Section -->
+        <div class="space-y-6">
+            <div class="flex flex-col items-center space-y-4">
+                <h1 class="text-2xl font-bold text-white">Current Roll No: {{ current_roll }}</h1>
+                <div class="p-2 bg-blue-100 rounded-lg flex justify-center">
+                    <img src="{{ form_data.captcha.url }}" alt="Captcha" class="h-12 w-auto rounded-lg object-cover mx-auto custom custom-blend">
+                </div>
+            </div>
+            
+            <div id="message-area" class="hidden p-4 text-sm rounded-lg bg-red-100 text-red-700"></div>
+            
+            <!-- Form -->
+            <form id="captcha-form" onsubmit="submitCaptcha(event)" class="space-y-4">
+                {% csrf_token %}
+                <div>
+                    <label for="captcha_value" class="block text-lg font-medium text-gray-300">Enter The Captcha</label>
+                    <input type="text" class="w-full px-4 py-2 bg-white/10 text-black rounded-lg border border-gray-400/30 placeholder-gray-400 shadow-lg focus:ring-4 focus:ring-pink-500 focus:outline-none transition duration-300" id="captcha_value" name="captcha_value" placeholder="Enter CAPTCHA" required>
+                </div>
+                <button type="submit" class="w-full py-3 bg-gradient-to-r from-pink-500 to-yellow-500 text-white font-bold rounded-full shadow-lg hover:opacity-90 hover:scale-105 transform transition duration-300">
+                    Submit
+                </button>
+            </form>
         </div>
     </div>
-    
-    <div id="message-area" class="alert" style="display: none;"></div>
-    
-    <form id="captcha-form" onsubmit="submitCaptcha(event)">
-        {% csrf_token %}
-        <div class="mb-3">
-            <label for="subject" class="form-label">Enter The Captcha</label>
-            <input type="text" class="form-control" id="subject" name="captcha_value" required>
-        </div>
-        <button type="submit" class="btn btn-success">Submit</button>
-    </form>
 </div>
 
 <script>
-  function submitCaptcha(event) {
-      event.preventDefault();
-      
-      const form = event.target;
-      const formData = new FormData(form);
-      
-      fetch('/scrap/submit-captcha/', {
-          method: 'POST',
-          body: formData,
-          headers: {
-              'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-          }
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.status === 'success') {
-              // Redirect to the URL for the next roll number
-              window.location.href = data.redirect_url;
-          } else if (data.status === 'completed') {
-              window.location.href = '/scrap/';  // Return to home
-          } else {
-              // Show error
-              const messageArea = document.getElementById('message-area');
-              messageArea.textContent = data.message;
-              messageArea.style.display = 'block';
-              messageArea.className = 'alert alert-danger';
-          }
-      })
-      .catch(error => {
-          console.error('Error:', error);
-          const messageArea = document.getElementById('message-area');
-          messageArea.textContent = 'An error occurred. Please try again.';
-          messageArea.style.display = 'block';
-          messageArea.className = 'alert alert-danger';
-      });
-  }
-  </script>
+    function submitCaptcha(event) {
+        event.preventDefault();
+        
+        const form = event.target;
+        const formData = new FormData(form);
+        
+        fetch('/profile/scrap/submit-captcha/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            const messageArea = document.getElementById('message-area');
+            if (data.status === 'success') {
+                // Redirect to the URL for the next roll number
+                window.location.href = data.redirect_url;
+            } else if (data.status === 'completed') {
+                window.location.href = '/profile/scrap/';  // Return to home
+            } else {
+                // Show error
+                messageArea.textContent = data.message;
+                messageArea.className = 'p-4 text-sm rounded-lg bg-red-100 text-red-700';
+                messageArea.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const messageArea = document.getElementById('message-area');
+            messageArea.textContent = 'An error occurred. Please try again.';
+            messageArea.className = 'p-4 text-sm rounded-lg bg-red-100 text-red-700';
+            messageArea.style.display = 'block';
+        });
+    }
+</script>
 {% endblock %}

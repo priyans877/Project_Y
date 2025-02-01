@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.urls import path , include
 from . import views
 
+
 urlpatterns = [
     path('', views.home, name='home_scrap'),
     path('feed/', views.scraper_feed, name='feed'),

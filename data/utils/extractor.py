@@ -123,21 +123,124 @@ def excle_convertor(data, customer ,branch , year , semester_s ,category):
     buffer.seek(0)
     
     # Create a Django model instance and save the file
-    excel_file = excle_model.objects.filter(user_id=customer , file = f"excel_files/{category}.xlsx")
-    print(customer)
-    
-    
-    if excel_file.exists():
-        print("FIle Already Exists")
-    
-    else:
-        excel_file = excle_model(user_id =customer , branch = branch , year = year , semester = semester_s)
-        excel_file.file.save(f"{category}.xlsx", ContentFile(buffer.read()))
-        buffer.close()
-        print("Excel file created and saved to database successfully!")\
+    try :
+        try:
+            excel_file = excle_model.objects.get(user_id=customer , file = f"excel_files/{category}.xlsx")
+            print(customer)
+            if excel_file.exists():
+                print("FIle Already Exists")
+                pass
+        except:
+            pass
+        
+        try:
+            print(customer , branch , year , semester_filter_s(semester_s)  , f"excel_files/{category}.xlsx")
+            excel_file, created = excle_model.objects.update_or_create(
+                user_id=customer,
+                branch=branch,
+                year=year,
+                semester=semester_filter_s(semester_s),
+                defaults={"file": f'excel_files/{category}.xlsx'},
+            )
+
+            # Save the file content
+            excel_file.file.save(f"{category}.xlsx", ContentFile(buffer.read()))
+
+            # Close the buffer after saving
+            buffer.close()
+
+            # Optional logging/debugging
+            if created:
+                print("New object created.")
+            else:
+                print("Existing object updated.")
+        except:
+            pass
+    except:
+        pass
+        
+       
     
         
-    return excel_file
+    return f'excel_files/{category}.xlsx'
+
+
+def branch_filter(data):
+    for i in range(len(data)):
+        if len(data[i])==10:
+            data[i] = "mech"
+        if len(data[i])== 9:
+            if data[i][:1]=="m" :
+                data[i] = "mba"
+            else :
+                data[i] = "bba"
+        if len(data[i])== 11:
+            if data[i][:1]=="c" :
+                data[i] = "civil"
+            else :
+                data[i] = "bba_f"
+        if len(data[i]) ==13:
+            if data[i][:1] == "c":
+                data[i] = 'cse_gen'
+            else:
+                data[i] = 'bca_gen'
+        if len(data[i]) ==12:
+            data[i] = 'bca_ds'
+        if len(data[i])==14:
+            data[i] = 'cse_aiml'
+    return data
+
+
+def semester_filter(datax):
+    data = datax
+    for i in range(len(data)):
+      
+        if data[i][-2:] == "01":
+            data[i] = "First Semester"
+        elif data[i][-2:] == "02":
+            data[i] = "Second Semester"
+        elif data[i][-2:] == "03":
+            data[i] = "Third Semester"
+        elif data[i][-2:] == "04":
+            data[i] = "Fourth Semester"
+        elif data[i][-2:] == "05":
+            data[i] = "Fifth Semester"
+        elif data[i][-2:] == "06":
+            data[i] = "Sixth Semester"
+        elif data[i][-2:] == "07":
+            data[i] = "Seventh Semester"
+        else:
+            data[i] = "Eight Semester"
+            
+    return data
+
+
+def semester_filter_s(value):
+    if value == "First Semester":
+        return "01"
+    elif value == "Second Semester":
+        return "02"
+    elif value == "Third Semester":
+        return "03"
+    elif value == "Fourth Semester":
+        return "04"
+    elif value == "Fifth Semester":
+        return "05"
+    elif value == "Sixth Semester":
+        return "06"
+    elif value == "Seventh Semester":
+        return "07"
+    elif value == "Eighth Semester":
+        return "08"
+
+
+def extract_year(texts):
+    for i in range(len(texts)):
+        parts = texts[i].split('_')
+        for part in parts:
+            if part.isdigit() and len(part) == 2 and int(part) >8:
+                texts[i] = part
+    return texts
 
 
 

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mystical Login Form with Yeti</title>
+  <title>Login Page</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Custom CSS for Mystical Theme -->
@@ -127,9 +127,71 @@
     .password-field:focus + .yeti-container .yeti .eyes .eye {
       height: 2px;
     }
+
+
+
+    .alert-container {
+      position: absolute;
+      top: 20px; /* Adjust as needed */
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      width: 90%; /* Adjust width if needed */
+      max-width: 500px;
+  }
+  
+  @keyframes fadeOut {
+      0% {
+          opacity: 1;
+      }
+      90% {
+          opacity: 0.1;
+      }
+      100% {
+          opacity: 0;
+          visibility: hidden;
+      }
+  }
+
+  .alert {
+      display: inline-block; /* Adjusts size dynamically to content */
+      padding: 10px 20px; /* Padding for spacing inside the alert */
+      border-radius: 20px; /* Rounded corners */
+      background-color: #f8d7da; /* Light red background */
+      color: #721c24; /* Dark red text color */
+      border: 1px solid #f5c6cb; /* Border for styling */
+      font-size: 16px; /* Text size */
+      max-width: 80%; /* Optional: Limit width for long messages */
+      margin: 10px auto; /* Center align with spacing */
+      animation: fadeOut 3s ease-in-out forwards; /* Fade out after 3 seconds */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+  }
+  
+  /* Close button styling */
+  .alert .close {
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      font-weight: bold;
+      color: #721c24;
+      cursor: pointer;
+  }
+  
   </style>
 </head>
 <body>
+  {% for message in messages %} 
+  <div class="alert-container">
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          <strong>Hey Hey!</strong> {{ message }}.
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+      </div>
+  </div>
+  {% endfor %}
+
+
   <div class="login-container">
     <h2>Hello Teacher | Login</h2>
     <div class="yeti-container">

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Dashboard 2025</title>
+  <script src="https://unpkg.com/htmx.org"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .hover-scale {
+      transition: transform 0.3s ease;
+    }
+
+    .hover-scale:hover {
+      transform: scale(1.02);
+    }
+
+    .sidebar-link {
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      margin: 4px 0;
+    }
+
+    .sidebar-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(5px);
+    }
+
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+
+    .charts-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      background: white;
+      padding: 10px;
+      margin-top: -10px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      gap: 20px;
+      height: 400px; /* Remove the fixed height */
+      overflow-y : hidden;
+    }
+    
+    .chart {
+      background:rgb(123, 175, 180);
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
+      height: 280px;
+    }
+    
+    .main-content {
+      height: calc(100vh - 64px); /* Adjust height to fit within the viewport */
+      overflow-y:auto; /* Enable scrolling if content overflows */
+    }
+    
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .stats-card {
+      background: white;
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .charts-section {
+      background: white;
+      border-radius: 8px;
+      padding:10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 10px; /* Add gap between children */
+    }
+    
+    @media (max-width: 768px) {
+      .charts-container {
+        flex-direction: column; /* Stack charts vertically on small screens */
+     
+      }
+    }
+    .selector-container {
+      display: flex;
+      justify-content: center; /* Horizontally centers the dropdown */
+      align-items: center; /* Vertically aligns if needed */
+      margin-bottom: 0px; /* Space below the selector to separate it from the chart */
+    }
+    
+    .custom-select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-color: #ffffff; /* Clean white background */
+      border: 1px solid #d1d5db; /* Light gray border */
+      border-radius: 6px; /* Softer rounded corners */
+      color: #1f2937; /* Neutral text color */
+      font-size: 14px;
+      padding: 6px 15px 6px 12px; /* Compact padding */
+      cursor: pointer;
+      transition: all 0.2s ease-in-out; /* Smooth hover effect */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    }
+    
+    .custom-select:hover {
+      border-color: #3b82f6; /* Highlight border on hover */
+      box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2); /* Stronger shadow */
+    }
+    
+    .custom-select:focus {
+      outline: none;
+      border-color: #2563eb; /* Focused border color */
+      box-shadow: 0 0 4px rgba(37, 99, 235, 0.5); /* Subtle glow effect */
+    }
+      
+    .btn-light {
+        background-color: rgb(139, 176, 213);
+        border: 1px solidrgb(173, 155, 155);
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+    
+    .btn-light:hover {
+        background-color:rgb(108, 130, 152);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+    }
+    
+    .btn-light:active {
+        transform: translateY(0);
+        background-color:rgb(106, 141, 176);
+    }
+    
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+  <!-- Navbar -->
+  <nav class="glass-effect fixed w-full z-30 px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-4">
+      <img src="/media/images/logo.png" alt="Logo" class="h-10 w-10 rounded-lg">
+      <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-500">
+        Aravali Dashboard
+      </h1>
+    </div>
+    <div class="flex items-center space-x-4">
+      <div class="relative">
+        <input type="search" placeholder="Search..." class="px-4 py-2 rounded-full bg-white shadow-sm border focus:outline-none focus:ring-2 focus:ring-purple-500">
+        <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
+      </div>
+     
+      <button class="btn btn-light fw-semibold shadow-sm px-4 py-2" type="button" onclick="window.location.href='/auth/login/'">
+        Login
+    </button>
+    
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="flex h-screen pt-16">
+    <!-- Sidebar -->
+    <div class="w-64 gradient-bg text-white p-6 fixed h-full">
+      <div class="space-y-6">
+        <div class="space-y-2">
+          <h2 class="text-sm uppercase tracking-wider opacity-75">Main Menu</h2>
+          <a href="{% url 'home_dash'%}" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="{% url 'get_data' %}" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
+            <i class="fas fa-database"></i>
+            <span>Datasets</span>
+          </a>
+          <a href="{% url 'under_dev' %}" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
+            <i class="fas fa-chart-bar"></i>
+            <span>Analytics</span>
+          </a>
+        </div>
+
+        <div class="space-y-2">
+          <h2 class="text-sm uppercase tracking-wider opacity-75">Tools</h2>
+          <a href="{% url 'feed' %}" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
+            <i class="fas fa-screwdriver-wrench"></i>
+            <span>Scrape Data</span>
+          </a>
+        </div>
+
+        <form action="{% url 'under_dev' %}" method="get">
+          <button type="submit" class="w-full bg-white text-purple-600 rounded-lg py-3 font-medium hover:bg-opacity-90 transition-all">
+              Start New Analysis
+          </button>
+      </form>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 ml-64 p-8 main-content">
+      <!-- Welcome Section -->
+      <div class="mb-1 animate-fade-in">
+        <h1 class="text-4xl font-bold text-gray-800">{{ user_name }} !</h1>
+        <p class="text-gray-600 mt-2">Here's what's happening with your {{ slogan }}.</p>
+      </div>
+      <!-- Stats Cards -->
+      <div class="stats-cards">
+        <!-- Total Students Card -->
+        <div class="stats-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600">Total Result Scraped Successfully</p>
+              <h3 class="text-2xl font-bold text-gray-800">{{ total_scrap }}</h3>
+            </div>
+            <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-id-card text-blue-500"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <span class="text-green-500 text-sm">↑ 12%</span>
+            <span class="text-gray-500 text-sm">from last month</span>
+          </div>
+        </div>
+
+        <!-- Active Datasets Card -->
+        <div class="stats-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600">Active Sheets</p>
+              <h3 class="text-2xl font-bold text-gray-800">{{ total_sheets }}</h3>
+            </div>
+            <div class="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-database text-purple-500"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <span class="text-green-500 text-sm">↑ 3</span>
+            <span class="text-gray-500 text-sm">new this week</span>
+          </div>
+        </div>
+
+        <!-- Analysis Progress Card -->
+        <div class="stats-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm text-gray-600">Active Teachers</p>
+              <h3 class="text-2xl font-bold text-gray-800">{{ total_users }}</h3>
+            </div>
+            <div class="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
+              <i class="fas fa-chart-pie text-green-500"></i>
+            </div>
+          </div>
+          <div class="mt-4">
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-green-500 h-2 rounded-full" style="width: 89%"></div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+      <!-- Charts Section -->
+      <div class="charts-section">
+        <!-- Form Buttons -->
+        <div class="selector-container">
+          <div style="margin-bottom: 10px; display: flex; gap: 10px;">
+            <select
+              name="selected_category"
+              id="semesterSelector"
+              class="custom-select"
+              {% comment %} hx-include="[name='selected_branch'],[name='selected_year']" {% endcomment %}
+              hx-get="/public/home/"
+              hx-trigger="change"
+              hx-target="#chart1"
+              hx-swap="innerHTML"
+            >
+            {% for soption in all_options %}
+                <option value="{{ soption }}">{{ soption|upper }}</option>
+            {% endfor %}
+        
+            </select>
+            
+          </div>
+        </div>
+        <!-- Chart Containers -->
+        <div id ="chart1" class="charts-container">
+            {% include "home/data_chart.html" %}
+            {% include 'home/data_chart.html'%} 
+        </div>
+
+      </div>
+
+
+
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</body>
+</html>
