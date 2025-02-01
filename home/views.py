@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render , redirect
 from django.http import JsonResponse , HttpResponse
 from scrap.models import result
 from django.contrib.auth.models import User
@@ -57,7 +57,7 @@ def home_public(request):
                 if data.exists():
                     selector_options.append(f"{branch}-{year}-{sem}")
                     
-    
+
     branch_option , year_option , semester_option = request.GET.get('selected_category' , selector_options[0]).split("-")
       
     
