@@ -9,6 +9,7 @@ from django.contrib import messages
 from selenium import webdriver
 from .models import *
 from .utils.data_workers import *
+import tempfile
 
 
 import json
@@ -27,6 +28,14 @@ def setup_driver():
     options.add_argument('--ignore-certificate-errors')
     options.add_argument('--incognito')
     options.add_argument('--headless')
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument("--disable-gpu")
+    # options.add_argument("--headless")  # Run in headless mode for servers
+    
+    # Set a unique temporary user data directory
+    temp_user_data_dir = tempfile.mkdtemp()
+    options.add_argument(f"--user-data-dir={temp_user_data_dir}")
     return webdriver.Chrome(options=options)
 
 def home(request):
