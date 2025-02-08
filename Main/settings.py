@@ -13,8 +13,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from django.contrib.messages import constants as messages
-PASSWORD = ''
-SECRET_ACCESS_KEY = ''
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -47,7 +49,8 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
     'rest_framework',
     'account',
-    'oops.apps.OopsConfig'
+    'oops.apps.OopsConfig',
+    'storages'
 ]
 
 MIDDLEWARE = [
@@ -104,7 +107,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'djangodb',
         'USER': 'admin',
-        'PASSWORD': PASSWORD,
+        'PASSWORD': 'Pk2062003',
         'HOST': 'database-2.chqium6egp6d.ap-south-1.rds.amazonaws.com',
         'PORT': '3306',
     }
@@ -151,12 +154,6 @@ import os
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/static/'
-# STATICFILES_DIRS = os.path.join(BASE_DIR, 'static')  # Where your app-specific static files are located
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -171,13 +168,35 @@ MESSAGE_TAGS = {
 
 
 
+MEDIA_URL = 'media/'
 
-AWS_ACCESS_KEY_ID = 'AKIAQ2ESYVKGWXCK7FWP'
-AWS_SECRET_ACCESS_KEY = SECRET_ACCESS_KEY
-AWS_STORAGE_BUCKET_NAME = 'mydjangoprojecty'
-AWS_S3_SIGNATURE_NAME = 's3v4',
-AWS_S3_REGION_NAME = 'ap-south-1'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
+STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+
+# Adding AWS S3 Bucket for storing Media Files
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_SIGNATURE_NAME = 's3v4'
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL =  None
 AWS_S3_VERIFY = True
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_S3_CUSTOM_DOMAIN = '{}.s3.{}.amazonaws.com'.format(AWS_STORAGE_BUCKET_NAME ,AWS_S3_REGION_NAME)
+
+
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STORAGES = {
+    #Media file
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+}
