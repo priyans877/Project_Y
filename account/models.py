@@ -14,7 +14,7 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 
 def profile_picture_path(instance, filename):
-    return f"profile_pictures/{instance.user.username}.png"
+    return f"media/profile_pictures/{instance.user.username}.png"
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

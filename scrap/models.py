@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class form_data(models.Model):
     user = models.ForeignKey(User , on_delete = models.CASCADE , null = True)
     id = models.AutoField(primary_key=True)
-    captcha = models.ImageField(upload_to='images/')
+    captcha = models.ImageField(upload_to='media/images/')
     roll_no = models.CharField(max_length=50)
     semester = models.CharField(max_length=50)
     

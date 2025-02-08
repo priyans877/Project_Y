@@ -8,7 +8,7 @@ from django.utils.timezone import now
 
 class excle_model(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE , null=True)
-    file = models.FileField(upload_to='excel_files/')
+    file = models.FileField(upload_to='media/excel_files/')
     semester = models.CharField(max_length=100)
     branch = models.CharField(max_length=100)
     year = models.CharField(max_length=100)
