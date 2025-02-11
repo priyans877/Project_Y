@@ -12,6 +12,6 @@ class chart_data(models.Model):
     recount = models.IntegerField(null =True)
     
     def Meta(self):
-        return  f"{self.student_name}"
+        return  f"{self.student_name}_{self.roll_no}"
     
     

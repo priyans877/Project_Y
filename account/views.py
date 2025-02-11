@@ -4,7 +4,8 @@ from django.contrib.auth import login, logout , authenticate
 from django.contrib.auth.models import User
 from django.contrib import messages
 from .decorators import unauthorised
-from .models import Profile
+from .models import Profile , AuthEmail
+
 
 # Create your views here.
 
@@ -21,8 +22,7 @@ def register_page(request):
         print(username)
         print(password ,confirm_pass)
         user = User.objects.filter(username = username)
-        
-        
+  
         
         if confirm_pass== password:
 
@@ -33,6 +33,9 @@ def register_page(request):
             elif "@acem.edu.in" not in email:
                 messages.error(request , 'Kinldy register with College MailID')
 
+            elif not AuthEmail.objects.filter(emails=email.lower()).exists():
+                messages.error(request,"You'r not a Teacher")
+            
             else:
                 user = User.objects.create(
                     username = username,
@@ -50,22 +53,33 @@ def register_page(request):
                
     return render(request, 'account/register.html')
     
+
 @unauthorised
 def login_page(request):
     next_link = request.GET.get('next')
     
     if request.method == 'POST':
-        username = request.POST.get('username')
+        email_get = request.POST.get('username')
         password = request.POST.get('password')
         
-        if not User.objects.filter(username = username).exists():
-            return redirect('register')
         
-        # if request.user.is_authenticated:
-        #     return redirect('get_data')
-        
+        if not User.objects.filter(email=email_get).exists():
+            if "@acem.edu.in" not in email_get:
+                messages.error(request, 'Kindly register with a College Mail ID')
+                return redirect('register')
+
+        elif "@" not in email_get and User.objects.filter(username=email_get).exists():
+            print("In username condition")
+
+                    
         else:           
-            print(username , password)
+            print(email_get, password)
+            username = ''
+            if "@" in email_get:
+                username = User.objects.get(email = email_get).username
+            else:
+                username = User.objects.get(username = email_get).username
+                
             user = authenticate(username = username, password = password)
             print(user)
             if user is None:
@@ -86,3 +100,4 @@ def login_page(request):
 def logout_page(request):
     logout(request)
     return redirect('login')
+

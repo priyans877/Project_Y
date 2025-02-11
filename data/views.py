@@ -9,8 +9,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import FileResponse , Http404
 import os
 from django.conf import settings
-from .utils.extractor import *
+from .utils import *
 from django.http import JsonResponse
+from django.conf import settings
 
 
 # Create your views here.
@@ -18,10 +19,10 @@ from django.http import JsonResponse
 def file_download(request, file_name):
     try:
         # Construct the file path
-        file_path = os.path.join(settings.MEDIA_ROOT, 'excel_files', f'{file_name}.xlsx')
-
-        # Serve the file
-        return FileResponse(open(file_path, 'rb'), as_attachment=True, filename=f'{file_name}.xlsx')
+        
+        file_downloadurl = settings.MEDIA_URL + f"excel_files/{file_name}.xlsx"
+        
+        return redirect(file_downloadurl)
     except FileNotFoundError:
         # If the file doesn't exist, return a 404 error
         raise Http404("File not found")
@@ -51,18 +52,20 @@ def download_excel(request, fileName):
     # print("after if condition")
     # print(fileName)
     if request.user.is_superuser:
-        file_details = excle_model.objects.filter(file__startswith=f"excel_files/{fileName}").first()
+        file_details = excle_model.objects.filter(file__startswith=f"media/excel_files/{fileName}").first()
     else:
         file_details = excle_model.objects.filter(
-            file__startswith=f"excel_files/{fileName}", user_id=request.user.id
+            file__startswith=f"media/excel_files/{fileName}", user_id=request.user.id
         ).first()
         
-    print(file_details)
+        
+    print("Printing file _details : - ",file_details)
 
     if file_details:
     
         # Calculate file size in KB
         print(file_details.file.url)
+        print("Here in File_details")
         file_size = round(file_details.file.size / 1024, 2)
 
         # Pass file information to the template

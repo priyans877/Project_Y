@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'data.apps.DataConfig',
     'home.apps.HomeConfig',
     'rest_framework',
-    'account',
+    'account.apps.AccountConfig',
     'oops.apps.OopsConfig',
     'storages'
 ]
@@ -177,14 +177,14 @@ AWS_SECRET_ACCESS_KEY = os.getenv('L_AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_SIGNATURE_NAME = 's3v4'
 AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME')
-AWS_S3_FILE_OVERWRITE = False
+AWS_S3_FILE_OVERWRITE = True
 AWS_DEFAULT_ACL =  None
 AWS_S3_VERIFY = True
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.ap-south-1.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
-# MEDIA_ROOT = BASE_DIR / 'media'
+# MEDIA_ROOT = 'media'
 
 
 STATIC_URL = 'static/'

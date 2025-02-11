@@ -1,15 +1,28 @@
-
+ 
     {% if datas %}
         {% for item in datas %}
-        <div class="bg-white p-4 rounded-lg shadow-md border border-gray-200 hover:scale-105 transform transition-all">
-            <h3 class="text-2xl font-semibold text-gray-700">{{ item.s_name }}</h3>
-            <p class="text-lg text-gray-600">{{ item.f_name }}</p>
-            <div class="mt-4 flex justify-between items-center">
-                <span class="text-sm text-gray-500">Mother: {{ item.m_name }}</span>
-                <span class="text-sm text-gray-500">CGPA: {{ item.cgpa }}</span>
+        <div class="bg-gradient-to-bg p-4 rounded-lg shadow-md border border-gray-200 hover:scale-105 transform transition-all">
+            <h3 class="text-2xl text-gray-700 font-normal">{{ item.s_name|slice:":12" }}{% if item.s_name|length > 10 %}...{% endif %}</h3>
+            <span class="text-sm text-gray-500">SGPA:   
+                {% if item.sgpa|slice:":1" == "[" %}
+                    Reapear
+                {% elif item.sgpa|floatformat:"2" %}
+                {{ item.sgpa }}
+                {% endif %}
+            </span>
+            
+            <div class="mt-4 flex justify-between items-bottom-0">
+                <span class="text-bold text-gray-500">Father: {{ item.f_name }}</span>             
+            </div> 
+            <div class="mt-4 flex justify-between items-center items-baseline">
+                <span class="text-bold text-gray-500">Mother: {{ item.m_name }}</span>             
             </div>
         </div>
         {% endfor %}
     {% else %}
         <p class="text-center text-gray-600">No data available for the selected filters.</p>
     {% endif %}
+
+    
+    
+    

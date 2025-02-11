@@ -1,12 +1,17 @@
 from django.conf import settings
-from ..models import *
+from .models import *
 import json
-import xlsxwriter
 from bs4 import BeautifulSoup
 import os
+import boto3
+from botocore.exceptions import ClientError
+from dotenv import load_dotenv
 
-media_path = settings.MEDIA_ROOT
+load_dotenv()
 
+media_path = settings.MEDIA_URL
+
+print(media_path , end="")
 def subject_parse(soup):
     subject_code= []
     subject_name = []
@@ -72,7 +77,7 @@ def subject_parse(soup):
             "Grade": result_s["pass_s"][i]
         }
         
-    print(subjects)
+    # print(subjects)
     return json.dumps(subjects)
 
 def data_save(current_state, page_s , user_detail):
@@ -100,29 +105,30 @@ def data_save(current_state, page_s , user_detail):
 
         try :
             if isinstance(float(sgpaS) , float):
-                print("True integer")
+                # print("True integer")
                 sgpa = float(sgpaS)
                 re_appear_count = 0
-                print(re_appear_count , sgpaS)
+                # print(re_appear_count , sgpaS)
         except:
             sgpaS = sgpaS.split()
             re_appear_count = len(sgpaS)
-            print(re_appear_count , sgpaS)
-            print("Not an integer")
+            
+            # print(re_appear_count , sgpaS)
+            # print("Not an integer")
                     
         c_result = soup.find(id = "lblCgpaResult").text
         
-        print("Here before process_Sub_result")
+        # print("Here before process_Sub_result")
         
         #EVERYTHING FINE TILL HERE
         sub_result =  json.loads(subject_parse(soup))
-        print("Here after process_sgpa")
+        # print("Here after process_sgpa")
         
-        print("here " , student_name,roll,father_name,mother_name,data_id,sgpaS,c_result ,re_appear_count , sub_result)
-        print("Here after process_sgpa")
+        # print("here " , student_name,roll,father_name,mother_name,data_id,sgpaS,c_result ,re_appear_count , sub_result)
+        # print("Here after process_sgpa")
         
         result_entry = result.objects.filter(category = data_id , user_id=user_detail , roll_no = roll)
-        print(result_entry)
+        # print(result_entry)
         
         if result_entry.exists(): 
             print("Matching Found UPDATING !!")        
@@ -133,9 +139,10 @@ def data_save(current_state, page_s , user_detail):
             print("Matching not Found")        
             result_entry = result(s_name=student_name,roll_no=roll,f_name=father_name,m_name=mother_name,category=data_id, sgpa=sgpaS ,cgpa=c_result ,re_count=re_appear_count ,result_s = sub_result , user =user_detail)
             result_entry.save()
-            print("Hererererer")
+            
+            # print("Hererererer")
         
-        print("saving funcitn call")
+        # print("saving funcitn call")
         count = 0
     except :
         count = 1
@@ -144,14 +151,54 @@ def data_save(current_state, page_s , user_detail):
 def image_rename(id , captcha_value):
     try :
         form = form_data.objects.get(id=id)
+
+        # print("Here in porinting form_ :- ", form.captcha)
     
         old_file_path = os.path.join(media_path , f"{form.captcha}")
         
         new_file_name = f"{captcha_value}.png"  # Make sure to 
         new_file_path = os.path.join(os.path.dirname(old_file_path), new_file_name)
+        print(new_file_path , old_file_path)
         os.rename(old_file_path, new_file_path)
         
-        form.captcha = f"images/{captcha_value}.png"
+        form.captcha = f"/images/{captcha_value}.png"
         form.save()
     except:
-        print("In image_rename")
+        pass
+
+
+def image_rename2(id, captcha_value):
+    try:
+        # Get the form data
+        form = form_data.objects.get(id=id)
+        old_file_key = f"{form.captcha}"  # S3 key of the old file
+        new_file_key = f"media/images/{captcha_value}.png"  # S3 key of the new file
+
+        # Initialize S3 client
+        s3 = boto3.client(
+            's3',
+            aws_access_key_id=os.getenv('L_AWS_ACCESS_KEY_ID'),
+            aws_secret_access_key=os.getenv('L_AWS_SECRET_ACCESS_KEY'),
+            region_name=os.getenv('AWS_S3_REGION_NAME')
+        )
+
+        # Copy the file to the new key
+        bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+        s3.copy_object(
+            Bucket=bucket_name,
+            CopySource={'Bucket': bucket_name, 'Key': old_file_key},
+            Key=new_file_key
+        )
+
+        # Delete the old file
+        s3.delete_object(Bucket=bucket_name, Key=old_file_key)
+
+        # Update the form's captcha field
+        form.captcha = f"images/{captcha_value}.png"
+        form.save()
+
+        print(f"File renamed successfully: {old_file_key} -> {new_file_key}")
+    except ClientError as e:
+        print(f"Error occurred: {e}")
+    except Exception as e:
+        print(f"Unexpected error occurred: {e}")

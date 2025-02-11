@@ -8,14 +8,12 @@ from django.http import JsonResponse
 from django.contrib import messages
 from selenium import webdriver
 from .models import *
-from .utils.data_workers import *
+from .utils import *
 import tempfile
-
-
 import json
 import os
 from django.conf import settings
-from bs4 import BeautifulSoup
+
 
 # Path to the media directory
 media_path = settings.MEDIA_ROOT
@@ -58,7 +56,7 @@ def scraper_feed(request):
         param_branch = request.POST['branch']
         
         param_end = int(param_end)+1
-        print(param_end)
+        # print(param_end)
         
         # Initialize the scraping session
         request.session['scraping_params'] = {
@@ -123,7 +121,7 @@ def run_scraper(request, start_s, end_s, semester , batch , branch):
     data = form_data.objects.filter(id=image_id).values('captcha')
     image_url = data[0]['captcha']
     
-    print(current_roll)
+    # print(current_roll)
     # Update session state
 
     # print(user.profile.image.path)
@@ -161,10 +159,8 @@ def submit_captcha(request):
         captcha_value = captcha_value.upper()
         current_state = request.session.get('current_state', {})
         
-        # Switch to main window and submit captcha
         driver.switch_to.window(driver.window_handles[0])
 
-        # Enter captcha
         captcha_input = driver.find_element(By.ID, "txtCaptcha")
         captcha_input.clear()
         captcha_input.send_keys(captcha_value)
@@ -174,14 +170,14 @@ def submit_captcha(request):
         submit_button.click()
         
     
-        print("================================================")
-        print(len(driver.window_handles))
-        print(driver.title)
+        # print("================================================")
+        # print(len(driver.window_handles))
+        # print(driver.title)
         
-        print("-----------------------------------------------")
+        # print("-----------------------------------------------")
         driver.switch_to.window(driver.window_handles[1])
-        print(driver.title)
-        print("-----------------------------------------------")
+        # print(driver.title)
+        # print("-----------------------------------------------")
         
         # def subject_parse(soup):
         #     subject_code= []
@@ -335,19 +331,18 @@ def submit_captcha(request):
                    
         if len(driver.window_handles)==3:
             driver.switch_to.window(driver.window_handles[2])
-            print(driver.title)
             
             data_save(current_state , driver.page_source , user)   
-            image_rename(current_state['form_entry_id'], captcha_value)
-            
-            print("================================================")
+            image_rename2(current_state['form_entry_id'], captcha_value)
+         
             driver.close()       
                    
         # Process result page he
         # Update roll number
         
         next_roll = str(int(current_state['roll_no']) + 1)
-        print("Next New Roll No : ", next_roll)
+        # print("Next New Roll No : ", next_roll)
+        
         if int(next_roll) >= int(current_state['end_roll']):
             driver.quit()
             driver = None
@@ -374,7 +369,7 @@ def submit_captcha(request):
         
         
     except Exception as e:
-        print("InLast exception")
+        # print("InLast exception")
         return JsonResponse({'status': 'error', 'message': str(e)})
 
 

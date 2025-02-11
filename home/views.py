@@ -50,10 +50,8 @@ def home_public(request):
     
     for sem in set(sem_options_temp):
         for branch in set(branch_options_temp):
-            for year in set(year_options_temp):
-                      
+            for year in set(year_options_temp):      
                 data = chart_data.objects.filter(branch = branch , semester = sem , year = year)
-                
                 if data.exists():
                     selector_options.append(f"{branch}-{year}-{sem}")
                     
@@ -65,8 +63,8 @@ def home_public(request):
     
     fig2 = reapear_batch(year_option , branch_option)
     
-    fig_html2 = fig2.to_html(full_html = False)
-    fig_html = fig.to_html(full_html=False)
+    fig_html2 = fig2.to_html(full_html = False , config={"displayModeBar": False})
+    fig_html = fig.to_html(full_html=False , config={"displayModeBar": False})
     
     
 
@@ -85,7 +83,7 @@ def home_public(request):
     if request.headers.get('HX-Request'):   
         return render(request, 'home/data_chart.html', message_info)
     
-    # Otherwise, return the full page
+    #return the full page
     return render(request, 'home/Home.html', message_info)
 
 
@@ -121,8 +119,8 @@ def dashboard(request):
     
     fig2 = reapear_batch(year_option , branch_option)
     
-    fig_html2 = fig2.to_html(full_html = False)
-    fig_html = fig.to_html(full_html=False)
+    fig_html2 = fig2.to_html(full_html = False , config={"displayModeBar": False})
+    fig_html = fig.to_html(full_html=False , config={"displayModeBar": False})
     # print(request.user.first_name)
     message_info = {
         'total_scrap' : len(result_count),

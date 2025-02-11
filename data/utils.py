@@ -1,4 +1,4 @@
-from ..models import excle_model
+from .models import excle_model
 import xlsxwriter
 from io import BytesIO
 from django.core.files.base import ContentFile
@@ -40,19 +40,22 @@ def excle_convertor(data, customer ,branch , year , semester_s ,category):
         'border': 1
     })
     
-    # List of subjects
+    #list of subjects
     subject_code = list(data[0]["result_s"].keys())
     subjects_name = data[0]['result_s'].values()
     sub_name = list(subject_name.get("Subject Name") for subject_name in subjects_name)
     sub_details = {i: {'code': subject_code[i], 'name': sub_name[i]} for i in range(len(subject_code))}
     subjects = list(data[0]["result_s"].keys())
     
-    # Write static headers
+    #non dynamic headers
     worksheet.merge_range('A1:A3', 'Roll No.', header_format)
     worksheet.merge_range('B1:B3', 'Student Name', header_format)
+    worksheet.merge_range('C1:C3', 'CGPA', header_format)
+    worksheet.merge_range('D1:D3', 'SGPA', header_format)
+    worksheet.merge_range('E1:E3', 'Re Count', header_format)
     
-    # Write subject headers
-    current_col = 2
+    #subject headers
+    current_col = 5
     for j in sub_details:
         start_col = xlsxwriter.utility.xl_col_to_name(current_col)
         end_col = xlsxwriter.utility.xl_col_to_name(current_col + 3)
@@ -66,18 +69,27 @@ def excle_convertor(data, customer ,branch , year , semester_s ,category):
         
         current_col += 4
     
+    
     # Write student data
     row = 3
     for student in data:
         # Write student info
+        print(student["sgpa"] , isinstance(student['sgpa'] , float))
+        
+        sgpa = float(student['sgpa']) if isinstance(student['sgpa'], (int, float, str)) and str(student['sgpa']).replace('.', '', 1).isdigit() else 0
+        
+        print(sgpa)
         worksheet.write(row, 0, student["roll_no"], cell_format)
         worksheet.write(row, 1, student["s_name"], cell_format)
-        print(student["roll_no"])
-        print(student["s_name"])
-        print("-===---===================================")
+        worksheet.write(row, 2, student["cgpa"], cell_format)
+        worksheet.write(row, 3, sgpa, cell_format)
+        worksheet.write(row, 4, student["re_count"], cell_format)
+        # print(student["roll_no"])
+        # print(student["s_name"])
+        # print("-===---===================================")
         
-        #Write subject marks
-        col = 2
+        #writing subject marks
+        col = 5
         for subject in subjects:
             
             if subject in student["result_s"]:
@@ -103,7 +115,6 @@ def excle_convertor(data, customer ,branch , year , semester_s ,category):
                     worksheet.write(row, col + 3, marks["Total Marks"], cell_format)
                     
             else:
-                # Fill with empty cells if subject data not available
                 worksheet.write(row, col, "", cell_format)
                 worksheet.write(row, col + 1, "", cell_format)
                 worksheet.write(row, col + 2, "", cell_format)
@@ -122,7 +133,7 @@ def excle_convertor(data, customer ,branch , year , semester_s ,category):
     
     buffer.seek(0)
     
-    # Create a Django model instance and save the file
+    # models instance
     try :
         try:
             excel_file = excle_model.objects.get(user_id=customer , file = f"excel_files/{category}.xlsx")
@@ -143,13 +154,12 @@ def excle_convertor(data, customer ,branch , year , semester_s ,category):
                 defaults={"file": f'excel_files/{category}.xlsx'},
             )
 
-            # Save the file content
+            #saving in databse
             excel_file.file.save(f"{category}.xlsx", ContentFile(buffer.read()))
 
-            # Close the buffer after saving
+            #closing buffer
             buffer.close()
-
-            # Optional logging/debugging
+            
             if created:
                 print("New object created.")
             else:
