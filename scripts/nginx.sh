@@ -1,10 +1,10 @@
 #!/usr/bin/bash
 
 # Replace {YOUR_PROJECT_MAIN_DIR_NAME} with your actual project directory name
-PROJECT_MAIN_DIR_NAME="django-aws-ec2-nginx-gunicorn"
+PROJECT_MAIN_DIR_NAME="Project_Y"
 
 # Replace {FOLDER_NAME_WHERE_SETTINGS_FILE_EXISTS} with the folder name where your nginx configuration file exists
-FOLDER_NAME_WHERE_SETTINGS_FILE_EXISTS="core"
+FOLDER_NAME_WHERE_SETTINGS_FILE_EXISTS="Main"
 
 # Reload systemd daemon
 sudo systemctl daemon-reload
