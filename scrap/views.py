@@ -120,7 +120,7 @@ def submit_captcha(request):
     global driver
     try:
         if not driver:
-            return JsonResponse({'status': 'error', 'message': 'Session expired'})
+            return JsonResponse({'status': 'error', 'message': f"{driver.title}"})
         
         captcha_value = request.POST.get('captcha_value', '').upper()
         current_state = request.session.get('current_state', {})
