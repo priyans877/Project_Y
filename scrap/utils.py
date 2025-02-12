@@ -7,6 +7,7 @@ import boto3
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
 import tempfile
+import requests
 
 load_dotenv()
 
@@ -170,26 +171,17 @@ def image_rename(id , captcha_value):
 
 
 def image_rename2(id, captcha_value):
-    """
-    Move and rename a file to the 'Labeled' directory in S3 bucket 
-    by downloading it locally, renaming, and re-uploading.
-    """
     try:
-        # Get form data
         form = form_data.objects.get(id=id)
 
-        # Old and new file paths
-        old_file_key = str(form.captcha).strip()  # Example: "media/images/oldfile.png"
-        new_file_key = f"media/Labeled/{captcha_value}.png"  # New file path
-
+        old_file_key = str(form.captcha).strip()
+        new_file_key = f"media/Labeled/{captcha_value}.png"
         bucket_name = str(os.getenv('AWS_STORAGE_BUCKET_NAME')).strip()
 
-        # Debug prints
         print(f"🔹 Bucket: {bucket_name}")
         print(f"🔹 Old File Key: {old_file_key}")
         print(f"🔹 New File Key: {new_file_key}")
 
-        # Initialize S3 client
         s3_client = boto3.client(
             's3',
             aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
@@ -197,32 +189,33 @@ def image_rename2(id, captcha_value):
             region_name=os.getenv('AWS_S3_REGION_NAME')
         )
 
-        # Step 1: Create a temporary local file
+        file_url = f"https://{bucket_name}.s3.ap-south-1.amazonaws.com/{old_file_key}"
+        print(f"📥 Downloading from URL: {file_url}")
+
+        response = requests.get(file_url)
+        
+        if response.status_code != 200:
+            print(f"❌ Error downloading file: {response.status_code} - {response.text}")
+            return False  
+
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            temp_file.write(response.content)
             temp_file_path = temp_file.name
 
-        print(f"📥 Downloading file to: {temp_file_path}")
+        print(f"✅ File downloaded successfully to {temp_file_path}")
 
-        # Step 2: Download the file from S3 to local storage
-        s3_client.download_file(bucket_name, old_file_key, temp_file_path)
-        print(f"✅ File downloaded successfully")
-
-        # Step 3: Upload the renamed file to the new location in S3
         with open(temp_file_path, "rb") as data:
             s3_client.upload_fileobj(data, bucket_name, new_file_key)
 
         print(f"✅ File uploaded successfully with new name: {new_file_key}")
 
-        # Step 4: Delete the original file from S3
         s3_client.delete_object(Bucket=bucket_name, Key=old_file_key)
         print(f"✅ Old file deleted: {old_file_key}")
 
-        # Step 5: Update the database record with the new file path
         form.captcha = new_file_key
         form.save()
         print(f"✅ Database updated with new file path: {new_file_key}")
 
-        # Step 6: Delete the temporary local file
         os.remove(temp_file_path)
         print(f"✅ Temporary file deleted")
 
@@ -230,4 +223,4 @@ def image_rename2(id, captcha_value):
 
     except Exception as e:
         print(f"❌ Error: {str(e)}")
-        raise
+        return False
