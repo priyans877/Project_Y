@@ -64,6 +64,7 @@ def scraper_feed(request):
         }
         return redirect('results', start_s=param_start, end_s=param_end, semester=param_semester, batch=param_batch, branch=param_branch)
     return render(request, 'scrap/scrap_feed.html')
+driver = None
 
 @login_required(login_url='login')
 def run_scraper(request, start_s, end_s, semester, batch, branch):
