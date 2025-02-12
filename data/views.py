@@ -66,12 +66,12 @@ def download_excel(request, fileName):
         # Calculate file size in KB
         print(file_details.file.url)
         print("Here in File_details")
-        file_size = round(file_details.file.size / 1024, 2)
+        # file_size = round(file_details.file.size / 1024, 2)
 
         # Pass file information to the template
         file_info = {
             "file_name": fileName,
-            "file_size": file_size,
+            "file_size": "Nan",
         }
         print(file_info)
         return render(request, 'data/download.html', file_info)
