@@ -166,19 +166,15 @@ def image_rename(id , captcha_value):
     except:
         pass
 
+
+
+
 def image_rename2(id, captcha_value):
     try:
         # Get the form data
         form = form_data.objects.get(id=id)
-        bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
-
-        old_file_key = str(form.captcha).strip()  # Ensure string & remove spaces
-        new_file_key = f"media/images/{str(captcha_value).strip()}.png"  # Ensure correct format
-
-        # Debugging logs
-        print(f"Bucket: {bucket_name}")
-        print(f"Old File Key: {old_file_key} (Type: {type(old_file_key)})")
-        print(f"New File Key: {new_file_key} (Type: {type(new_file_key)})")
+        old_file_key = f"{form.captcha}"  # S3 key of the old file
+        new_file_key = f"media/images/{captcha_value}.png"  # S3 key of the new file
 
         # Initialize S3 client
         s3 = boto3.client(
@@ -188,27 +184,13 @@ def image_rename2(id, captcha_value):
             region_name=os.getenv('AWS_S3_REGION_NAME')
         )
 
-        # Ensure Old File Key starts with "media/images/"
-        if not old_file_key.startswith("media/images/"):
-            old_file_key = f"media/images/{old_file_key}"
-
-        # Check if the old file exists before copying
-        try:
-            s3.head_object(Bucket=bucket_name, Key=old_file_key)
-            print("✅ File exists, proceeding with rename.")
-        except ClientError as e:
-            error_code = e.response['Error']['Code']
-            if error_code == "404":
-                print(f"❌ Error: File not found - {old_file_key}")
-            elif error_code == "403":
-                print(f"🚫 Error: Access denied - Check S3 permissions for {old_file_key}")
-            else:
-                print(f"⚠️ Unexpected error: {e}")
-            return  # Stop execution if file is missing
-
-        # Copy the file to the new name
-        copy_source = {"Bucket": bucket_name, "Key": old_file_key}
-        s3.copy_object(Bucket=bucket_name, CopySource=copy_source, Key=new_file_key)
+        # Copy the file to the new key
+        bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+        s3.copy_object(
+            Bucket=bucket_name,
+            CopySource={'Bucket': bucket_name, 'Key': old_file_key},
+            Key=new_file_key
+        )
 
         # Delete the old file
         s3.delete_object(Bucket=bucket_name, Key=old_file_key)
@@ -217,9 +199,8 @@ def image_rename2(id, captcha_value):
         form.captcha = f"images/{captcha_value}.png"
         form.save()
 
-        print(f"✅ File renamed successfully: {old_file_key} -> {new_file_key}")
-
+        print(f"File renamed successfully: {old_file_key} -> {new_file_key}")
     except ClientError as e:
-        print(f"❌ AWS Client Error: {e}")
+        print(f"Error occurred: {e}")
     except Exception as e:
-        print(f"⚠️ Unexpected error: {e}")
+        print(f"Unexpected error occurred: {e}")
