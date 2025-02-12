@@ -6,6 +6,7 @@ import os
 import boto3
 from botocore.exceptions import ClientError
 from dotenv import load_dotenv
+import tempfile
 
 load_dotenv()
 
@@ -170,14 +171,15 @@ def image_rename(id , captcha_value):
 
 def image_rename2(id, captcha_value):
     """
-    Move and rename a file to the 'Labeled' directory in S3 bucket using get_object and put_object.
+    Move and rename a file to the 'Labeled' directory in S3 bucket 
+    by downloading it locally, renaming, and re-uploading.
     """
     try:
         # Get form data
         form = form_data.objects.get(id=id)
 
         # Old and new file paths
-        old_file_key = str(form.captcha).strip()  # Example: "media/originals/file.png"
+        old_file_key = str(form.captcha).strip()  # Example: "media/images/oldfile.png"
         new_file_key = f"media/Labeled/{captcha_value}.png"  # New file path
 
         bucket_name = str(os.getenv('AWS_STORAGE_BUCKET_NAME')).strip()
@@ -195,23 +197,34 @@ def image_rename2(id, captcha_value):
             region_name=os.getenv('AWS_S3_REGION_NAME')
         )
 
-        # Step 1: Get the file content from S3
-        response = s3_client.get_object(Bucket=bucket_name, Key=old_file_key)
-        object_data = response['Body'].read()
-        print(f"✅ File read from S3")
+        # Step 1: Create a temporary local file
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            temp_file_path = temp_file.name
 
-        # Step 2: Upload the file with a new name
-        s3_client.put_object(Bucket=bucket_name, Key=new_file_key, Body=object_data)
-        print(f"✅ File uploaded with new name: {new_file_key}")
+        print(f"📥 Downloading file to: {temp_file_path}")
 
-        # Step 3: Delete the old file
+        # Step 2: Download the file from S3 to local storage
+        s3_client.download_file(bucket_name, old_file_key, temp_file_path)
+        print(f"✅ File downloaded successfully")
+
+        # Step 3: Upload the renamed file to the new location in S3
+        with open(temp_file_path, "rb") as data:
+            s3_client.upload_fileobj(data, bucket_name, new_file_key)
+
+        print(f"✅ File uploaded successfully with new name: {new_file_key}")
+
+        # Step 4: Delete the original file from S3
         s3_client.delete_object(Bucket=bucket_name, Key=old_file_key)
         print(f"✅ Old file deleted: {old_file_key}")
 
-        # Step 4: Update database record
+        # Step 5: Update the database record with the new file path
         form.captcha = new_file_key
         form.save()
         print(f"✅ Database updated with new file path: {new_file_key}")
+
+        # Step 6: Delete the temporary local file
+        os.remove(temp_file_path)
+        print(f"✅ Temporary file deleted")
 
         return True
 
