@@ -148,10 +148,10 @@ def submit_captcha(request):
         request.session.modified = True
         
         driver.switch_to.window(driver.window_handles[1])
-        a= driver.title()
+        a= driver.title
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
-        b= driver.title()
+        b= driver.title
         return JsonResponse({
             'status': 'success',
             'message': f"driver name {a ,b }",
