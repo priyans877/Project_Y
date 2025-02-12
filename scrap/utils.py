@@ -194,9 +194,7 @@ def image_rename2(id, captcha_value):
             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
             region_name=os.getenv('AWS_S3_REGION_NAME')
         )
-        sts_client = boto3.client('sts')
-        identity = sts_client.get_caller_identity()
-        print(f"🔍 AWS IAM User: {identity['Arn']}")
+ 
         
         # Copy with explicit string formatting
         copy_source = str(f"{bucket_name}/{old_file_key}")
