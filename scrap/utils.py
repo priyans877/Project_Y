@@ -170,19 +170,22 @@ def image_rename(id , captcha_value):
 
 def image_rename2(id, captcha_value):
     """
-    Rename a file in an S3 bucket and update the corresponding form record.
-    
-    Args:
-        id: The form data ID
-        captcha_value: The new name for the captcha file
+    Move and rename a file to the Labeled directory in S3 bucket.
     """
     try:
         # Get the form data
         form = form_data.objects.get(id=id)
         
-        # Construct full paths for old and new keys
-        old_file_key = form.captcha  # Assuming this already contains the full path
-        new_file_key = f"media/images/{captcha_value}.png"
+        # Ensure all keys are strings and construct new path with Labeled directory
+        old_file_key = str(form.captcha).strip()
+        new_file_key = str(f"media/Labeled/{captcha_value}.png").strip()  # Added Labeled directory
+        bucket_name = str(os.getenv('AWS_STORAGE_BUCKET_NAME')).strip()
+        
+        # Debug prints
+        print("Debug values:")
+        print(f"Bucket name: '{bucket_name}'")
+        print(f"Old file key: '{old_file_key}'")
+        print(f"New file key: '{new_file_key}'")
         
         # Initialize S3 client
         s3_client = boto3.client(
@@ -191,48 +194,32 @@ def image_rename2(id, captcha_value):
             aws_secret_access_key=os.getenv('L_AWS_SECRET_ACCESS_KEY'),
             region_name=os.getenv('AWS_S3_REGION_NAME')
         )
-        
-        bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
-        
-        # First check if the source file exists
-        try:
-            s3_client.head_object(Bucket=bucket_name, Key=old_file_key)
-        except ClientError as e:
-            if e.response['Error']['Code'] == '404':
-                raise FileNotFoundError(f"Source file {old_file_key} does not exist in bucket {bucket_name}")
-            raise
 
-        # Copy the file
+        # Copy with explicit string formatting
+        copy_source = str(f"{bucket_name}/{old_file_key}")
+        print(f"Copy source: '{copy_source}'")
+        
+        # Perform copy operation to new Labeled directory
         s3_client.copy_object(
             Bucket=bucket_name,
-            CopySource=f'{bucket_name}/{old_file_key}',
+            CopySource=copy_source,
             Key=new_file_key
         )
         
-        # Delete the old file
+        # Delete original file
         s3_client.delete_object(
             Bucket=bucket_name,
             Key=old_file_key
         )
         
-        # Update the form's captcha field
-        form.captcha = f"images/{captcha_value}.png"
+        # Update form with new path including Labeled directory
+        form.captcha = f"images/Labeled/{captcha_value}.png"
         form.save()
         
-        print(f"File renamed successfully from {old_file_key} to {new_file_key}")
+        print(f"File successfully moved to Labeled directory and renamed")
         return True
         
-    except form_data.DoesNotExist:
-        print(f"Form with id {id} not found")
-        raise
-    except FileNotFoundError as e:
-        print(str(e))
-        raise
-    except ClientError as e:
-        error_code = e.response['Error']['Code']
-        error_message = e.response['Error']['Message']
-        print(f"AWS Error ({error_code}): {error_message}")
-        raise
     except Exception as e:
-        print(f"Unexpected error occurred: {str(e)}")
+        print(f"Error details: {str(e)}")
+        print(f"Error type: {type(e)}")
         raise
