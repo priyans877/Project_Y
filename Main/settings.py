@@ -51,12 +51,20 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'oops.apps.OopsConfig',
     'storages',
+<<<<<<< HEAD
+=======
+    # 'whitenoise.runserver_nostatic',
+>>>>>>> 19862dd8e5340800d095c7a479b28c0fa28d6381
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+<<<<<<< HEAD
+=======
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
+>>>>>>> 19862dd8e5340800d095c7a479b28c0fa28d6381
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -200,5 +208,23 @@ STORAGES = {
     },
     "staticfiles": {
         "BACKEND": "storages.backends.s3boto3.S3StaticStorage",
+    },
+}
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
     },
 }

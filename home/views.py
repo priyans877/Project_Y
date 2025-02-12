@@ -93,9 +93,12 @@ def home_public(request):
 @login_required(login_url='login' , driver = driver)
 def dashboard(request):
     data_transfer()
+<<<<<<< HEAD
     if driver:
         driver.quit()
         driver = None
+=======
+>>>>>>> 19862dd8e5340800d095c7a479b28c0fa28d6381
     request.session.pop('current_state', None)
     
     print(request.user.id)
