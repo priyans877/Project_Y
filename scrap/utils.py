@@ -193,13 +193,6 @@ def image_rename2(id, captcha_value):
         )
         
         bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
-        bucket = s3.Bucket(bucket_name)
-        
-        # Copy the file to the new location
-        copy_source = {
-            'Bucket': bucket_name,
-            'Key': old_file_key
-        }
         
         # First verify the old file exists
         try:
@@ -209,8 +202,11 @@ def image_rename2(id, captcha_value):
                 raise FileNotFoundError(f"Source file {old_file_key} does not exist in bucket {bucket_name}")
             raise
             
-        # Perform the copy and delete
-        bucket.copy(copy_source, new_file_key)
+        # Perform the copy with correct CopySource format
+        copy_source = f'{bucket_name}/{old_file_key}'  # Changed to string format
+        s3.Object(bucket_name, new_file_key).copy_from(CopySource=copy_source)
+        
+        # Delete the old file
         s3.Object(bucket_name, old_file_key).delete()
         
         # Update the form's captcha field - strip 'media/' if it's included in the DB path
