@@ -186,15 +186,11 @@ def image_rename2(id, captcha_value):
 
         # Copy the file to the new key
         bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
-        s3.copy_object(
-            Bucket=bucket_name,
-            CopySource={'Bucket': bucket_name, 'Key': old_file_key},
-            Key=new_file_key
-        )
 
-        # Delete the old file
-        s3.delete_object(Bucket=bucket_name, Key=old_file_key)
-
+        s3 = boto3.resource('s3')
+        s3.Object(f'{bucket_name}',f'{new_file_key}').copy_from(CopySource=f'{bucket_name}/{old_file_key}')
+        s3.Object(f'{bucket_name}',f'{old_file_key}').delete()
+        
         # Update the form's captcha field
         form.captcha = f"images/{captcha_value}.png"
         form.save()
