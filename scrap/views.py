@@ -64,7 +64,7 @@ def scraper_feed(request):
         }
         return redirect('results', start_s=param_start, end_s=param_end, semester=param_semester, batch=param_batch, branch=param_branch)
     return render(request, 'scrap/scrap_feed.html')
-driver = None
+
 
 @login_required(login_url='login')
 def run_scraper(request, start_s, end_s, semester, batch, branch):
@@ -121,6 +121,7 @@ def submit_captcha(request):
     try:
         if not driver:
             return JsonResponse({'status': 'error', 'message': 'Session expired'})
+        
         captcha_value = request.POST.get('captcha_value', '').upper()
         current_state = request.session.get('current_state', {})
         wait = WebDriverWait(driver, 10)
@@ -136,18 +137,24 @@ def submit_captcha(request):
             image_rename2(current_state['form_entry_id'], captcha_value)
             driver.close()
         next_roll = str(int(current_state['roll_no']) + 1)
+        
         if int(next_roll) >= int(current_state['end_roll']):
             driver.quit()
             driver = None
             return JsonResponse({'status': 'completed'})
+            
         current_state['roll_no'] = next_roll
         request.session['current_state'] = current_state
         request.session.modified = True
+        
         driver.switch_to.window(driver.window_handles[1])
+        a= driver.title()
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
+        b= driver.title()
         return JsonResponse({
             'status': 'success',
+            'message': f"driver name {a ,b }",
             'next_roll': next_roll,
             'batch': current_state['batch'],
             'redirect_url': f'/profile/scrap/results/{next_roll}/{current_state["end_roll"]}/{current_state["semester"]}/{current_state["batch"]}/{current_state["branch"]}'
