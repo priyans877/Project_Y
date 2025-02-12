@@ -90,7 +90,7 @@ def home_public(request):
 
 
 
-@login_required(login_url='login' , driver = driver)
+@login_required(login_url='login')
 def dashboard(request):
     data_transfer()
 
