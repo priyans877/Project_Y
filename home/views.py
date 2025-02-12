@@ -12,7 +12,6 @@ import plotly.express as ps
 from account.models import Profile
 from django.contrib.auth.decorators import login_required
 from account.decorators import unauthorised
-from scrap.views import driver
 # Create your views here.
 
 @api_view(['GET'])
@@ -90,12 +89,9 @@ def home_public(request):
 
 
 
-@login_required(login_url='login' , driver = driver)
+@login_required(login_url='login')
 def dashboard(request):
     data_transfer()
-    if driver:
-        driver.quit()
-        driver = None
     request.session.pop('current_state', None)
     
     print(request.user.id)
