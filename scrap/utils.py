@@ -184,8 +184,8 @@ def image_rename2(id, captcha_value):
         old_file_key = form.captcha  # Assuming this already contains the full path
         new_file_key = f"media/images/{captcha_value}.png"
         
-        # Initialize S3 resource
-        s3 = boto3.resource(
+        # Initialize S3 client
+        s3_client = boto3.client(
             's3',
             aws_access_key_id=os.getenv('L_AWS_ACCESS_KEY_ID'),
             aws_secret_access_key=os.getenv('L_AWS_SECRET_ACCESS_KEY'),
@@ -194,22 +194,28 @@ def image_rename2(id, captcha_value):
         
         bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
         
-        # First verify the old file exists
+        # First check if the source file exists
         try:
-            s3.Object(bucket_name, old_file_key).load()
+            s3_client.head_object(Bucket=bucket_name, Key=old_file_key)
         except ClientError as e:
             if e.response['Error']['Code'] == '404':
                 raise FileNotFoundError(f"Source file {old_file_key} does not exist in bucket {bucket_name}")
             raise
-            
-        # Perform the copy with correct CopySource format
-        copy_source = f'{bucket_name}/{old_file_key}'  # Changed to string format
-        s3.Object(bucket_name, new_file_key).copy_from(CopySource=copy_source)
+
+        # Copy the file
+        s3_client.copy_object(
+            Bucket=bucket_name,
+            CopySource=f'{bucket_name}/{old_file_key}',
+            Key=new_file_key
+        )
         
         # Delete the old file
-        s3.Object(bucket_name, old_file_key).delete()
+        s3_client.delete_object(
+            Bucket=bucket_name,
+            Key=old_file_key
+        )
         
-        # Update the form's captcha field - strip 'media/' if it's included in the DB path
+        # Update the form's captcha field
         form.captcha = f"images/{captcha_value}.png"
         form.save()
         
