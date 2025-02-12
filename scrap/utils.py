@@ -170,23 +170,23 @@ def image_rename(id , captcha_value):
 
 def image_rename2(id, captcha_value):
     """
-    Move and rename a file to the Labeled directory in S3 bucket.
+    Move and rename a file to the 'Labeled' directory in S3 bucket using get_object and put_object.
     """
     try:
-        # Get the form data
+        # Get form data
         form = form_data.objects.get(id=id)
-        
-        # Ensure all keys are strings and construct new path with Labeled directory
-        old_file_key = str(form.captcha).strip()
-        new_file_key = str(f"media/Labeled/{captcha_value}.png").strip()  # Added Labeled directory
+
+        # Old and new file paths
+        old_file_key = str(form.captcha).strip()  # Example: "media/originals/file.png"
+        new_file_key = f"media/Labeled/{captcha_value}.png"  # New file path
+
         bucket_name = str(os.getenv('AWS_STORAGE_BUCKET_NAME')).strip()
-        
+
         # Debug prints
-        print("Debug values:")
-        print(f"Bucket name: '{bucket_name}'")
-        print(f"Old file key: '{old_file_key}'")
-        print(f"New file key: '{new_file_key}'")
-        
+        print(f"🔹 Bucket: {bucket_name}")
+        print(f"🔹 Old File Key: {old_file_key}")
+        print(f"🔹 New File Key: {new_file_key}")
+
         # Initialize S3 client
         s3_client = boto3.client(
             's3',
@@ -194,35 +194,27 @@ def image_rename2(id, captcha_value):
             aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
             region_name=os.getenv('AWS_S3_REGION_NAME')
         )
-        sts_client = boto3.client('sts')
-        identity = sts_client.get_caller_identity()
-        print(f"🔍 AWS IAM User: {identity['Arn']}")
-        
-        # Copy with explicit string formatting
-        copy_source = str(f"{bucket_name}/{old_file_key}")
-        print(f"Copy source: '{copy_source}'")
-        
-        # Perform copy operation to new Labeled directory
-        s3_client.copy_object(
-            Bucket=bucket_name,
-            CopySource=copy_source,
-            Key=new_file_key
-        )
-        
-        # Delete original file
-        s3_client.delete_object(
-            Bucket=bucket_name,
-            Key=old_file_key
-        )
-        
-        # Update form with new path including Labeled directory
-        form.captcha = f"images/Labeled/{captcha_value}.png"
+
+        # Step 1: Get the file content from S3
+        response = s3_client.get_object(Bucket=bucket_name, Key=old_file_key)
+        object_data = response['Body'].read()
+        print(f"✅ File read from S3")
+
+        # Step 2: Upload the file with a new name
+        s3_client.put_object(Bucket=bucket_name, Key=new_file_key, Body=object_data)
+        print(f"✅ File uploaded with new name: {new_file_key}")
+
+        # Step 3: Delete the old file
+        s3_client.delete_object(Bucket=bucket_name, Key=old_file_key)
+        print(f"✅ Old file deleted: {old_file_key}")
+
+        # Step 4: Update database record
+        form.captcha = new_file_key
         form.save()
-        
-        print(f"File successfully moved to Labeled directory and renamed")
+        print(f"✅ Database updated with new file path: {new_file_key}")
+
         return True
-        
+
     except Exception as e:
-        print(f"Error details: {str(e)}")
-        print(f"Error type: {type(e)}")
+        print(f"❌ Error: {str(e)}")
         raise
