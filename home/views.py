@@ -94,10 +94,6 @@ def home_public(request):
 def dashboard(request):
     data_transfer()
 
-    if driver:
-        driver.quit()
-        driver = None
-    request.session.pop('current_state', None)
     
     print(request.user.id)
     result_count = result.objects.filter(user_id = request.user.id) #total datascraped till now
