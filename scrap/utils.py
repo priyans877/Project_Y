@@ -168,35 +168,69 @@ def image_rename(id , captcha_value):
 
 
 
-
 def image_rename2(id, captcha_value):
+    """
+    Rename a file in an S3 bucket and update the corresponding form record.
+    
+    Args:
+        id: The form data ID
+        captcha_value: The new name for the captcha file
+    """
     try:
         # Get the form data
         form = form_data.objects.get(id=id)
-        old_file_key = f"{form.captcha}"  # S3 key of the old file
-        new_file_key = f"media/images/{captcha_value}.png"  # S3 key of the new file
-
-        # Initialize S3 client
-        s3 = boto3.client(
+        
+        # Construct full paths for old and new keys
+        old_file_key = form.captcha  # Assuming this already contains the full path
+        new_file_key = f"media/images/{captcha_value}.png"
+        
+        # Initialize S3 resource
+        s3 = boto3.resource(
             's3',
             aws_access_key_id=os.getenv('L_AWS_ACCESS_KEY_ID'),
             aws_secret_access_key=os.getenv('L_AWS_SECRET_ACCESS_KEY'),
             region_name=os.getenv('AWS_S3_REGION_NAME')
         )
-
-        # Copy the file to the new key
-        bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
-
-        s3 = boto3.resource('s3')
-        s3.Object(f'{bucket_name}',f'{new_file_key}').copy_from(CopySource=f'{bucket_name}/{old_file_key}')
-        s3.Object(f'{bucket_name}',f'{old_file_key}').delete()
         
-        # Update the form's captcha field
+        bucket_name = os.getenv('AWS_STORAGE_BUCKET_NAME')
+        bucket = s3.Bucket(bucket_name)
+        
+        # Copy the file to the new location
+        copy_source = {
+            'Bucket': bucket_name,
+            'Key': old_file_key
+        }
+        
+        # First verify the old file exists
+        try:
+            s3.Object(bucket_name, old_file_key).load()
+        except ClientError as e:
+            if e.response['Error']['Code'] == '404':
+                raise FileNotFoundError(f"Source file {old_file_key} does not exist in bucket {bucket_name}")
+            raise
+            
+        # Perform the copy and delete
+        bucket.copy(copy_source, new_file_key)
+        s3.Object(bucket_name, old_file_key).delete()
+        
+        # Update the form's captcha field - strip 'media/' if it's included in the DB path
         form.captcha = f"images/{captcha_value}.png"
         form.save()
-
-        print(f"File renamed successfully: {old_file_key} -> {new_file_key}")
+        
+        print(f"File renamed successfully from {old_file_key} to {new_file_key}")
+        return True
+        
+    except form_data.DoesNotExist:
+        print(f"Form with id {id} not found")
+        raise
+    except FileNotFoundError as e:
+        print(str(e))
+        raise
     except ClientError as e:
-        print(f"Error occurred: {e}")
+        error_code = e.response['Error']['Code']
+        error_message = e.response['Error']['Message']
+        print(f"AWS Error ({error_code}): {error_message}")
+        raise
     except Exception as e:
-        print(f"Unexpected error occurred: {e}")
+        print(f"Unexpected error occurred: {str(e)}")
+        raise
