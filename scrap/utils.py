@@ -13,7 +13,7 @@ load_dotenv()
 
 media_path = settings.MEDIA_URL
 
-print(media_path , end="")
+print(media_path )
 def subject_parse(soup):
     subject_code= []
     subject_name = []
@@ -223,4 +223,36 @@ def image_rename2(id, captcha_value):
 
     except Exception as e:
         print(f"❌ Error: {str(e)}")
+        return False
+    
+    
+def branch_checker(roll_no):
+    branch_mapping = {
+        "0180": "cse_aiml",
+        "0185": "cse_aiml",
+        "0040": "cse_gen",
+        "0045": "cse_gen",
+        "0020": "civil",
+        "0025": "civil",
+        "0130": "mech",
+        "0135": "mech",
+        "0080": "ece",
+        "0085": "ece",
+        "701": "mba",
+        "301": "bba_gen",
+        "304": "bba_f",
+        "305": "bba_d"
+    }
+    
+    for key , values in branch_mapping.items():
+        if key in roll_no:
+            return values
+    
+    
+def leet_checker(roll_no):
+    leet = ["0185" , "0045" , "0025" , "0135" , "0085"]
+    
+    if any(leet in roll_no for leet in leet):
+        return True
+    else:
         return False

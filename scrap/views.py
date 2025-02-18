@@ -13,6 +13,7 @@ import tempfile
 import json
 import os
 from django.conf import settings
+from django.contrib import messages
 
 
 # Path to the media directory
@@ -30,8 +31,7 @@ def setup_driver():
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     # options.add_argument("--headless")  # Run in headless mode for servers
-    
-    # Set a unique temporary user data directory
+
     temp_user_data_dir = tempfile.mkdtemp()
     options.add_argument(f"--user-data-dir={temp_user_data_dir}")
     return webdriver.Chrome(options=options)
@@ -55,9 +55,31 @@ def scraper_feed(request):
         param_batch = request.POST['batch']
         param_branch = request.POST['branch']
         
-        param_end = int(param_end)+1
-        # print(param_end)
         
+        if not (len(param_start) == 11 and len(param_end) == 11):
+            messages.error(request, "Invalid Roll Number")
+            return redirect('feed')
+
+        if param_start[:2] != param_end[:2]:
+            messages.error(request, 'Make sure Both Roll Numbers are of the same Batch!!')
+            return redirect('feed')
+        
+        if param_branch != branch_checker(param_start):
+            messages.error(request, 'Make sure Roll Numbers are of the same Branch!!')
+            return redirect('feed')
+
+        if leet_checker(param_start):
+            if int(param_start[:2]) - 1 != int(param_batch):
+                messages.error(request, f'Make sure Leet {param_start[:2]} is of Batch {int(param_start[:2])-1}!!')
+                return redirect('feed')
+            
+        if param_start[:2] != param_batch:
+            messages.error(request , "Ensure Roll No and Batch are of same Category")
+            return redirect('feed')
+            
+            
+        param_end = int(param_end) + 1  # increment to include last roll number
+
         # Initialize the scraping session
         request.session['scraping_params'] = {
             'start_roll': param_start,
@@ -66,7 +88,7 @@ def scraper_feed(request):
             'current_roll': param_start,
             'branch' : param_branch,
             'batch' : param_batch,
-            'form_filled': False  # Track if we've filled the form
+            'form_filled': False 
         }
         
         return redirect('results', start_s=param_start, end_s=param_end, semester=param_semester , batch =param_batch , branch=param_branch)
@@ -178,7 +200,7 @@ def submit_captcha(request):
         driver.switch_to.window(driver.window_handles[1])
         # print(driver.title)
         # print("-----------------------------------------------")
-        
+        """  
         # def subject_parse(soup):
         #     subject_code= []
         #     subject_name = []
@@ -326,9 +348,8 @@ def submit_captcha(request):
         #         form.captcha = f"images/{captcha_value}.png"
         #         form.save()
         #     except:
-        #         print("In image_rename")
-    
-                   
+        #         print("In image_rename")"""
+                       
         if len(driver.window_handles)==3:
             driver.switch_to.window(driver.window_handles[2])
             

@@ -19,7 +19,6 @@ from scrap.views import driver
 def resp(request):
     main_data = result.objects.all()
     data = resultSerializer(main_data , many=True)
-    data_transfer()
     return Response(data.data)
 
 
@@ -36,7 +35,7 @@ def get_chart(request):
     
 @unauthorised
 def home_public(request):
-    # Called data_transer to update all data
+    #data_transer to update all data
     data_transfer()
     result_count = result.objects.all() #total datascraped till now
     total_user = User.objects.all()
@@ -138,6 +137,6 @@ def dashboard(request):
     if request.headers.get('HX-Request'):   
         return render(request, 'home/data_chart.html', message_info)
     
-    # Otherwise, return the full page
+    # otherwise, return the full page
     return render(request, 'home/dashboard.html', message_info)
     

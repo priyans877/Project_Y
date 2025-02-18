@@ -61,25 +61,36 @@ def login_page(request):
     if request.method == 'POST':
         email_get = request.POST.get('username')
         password = request.POST.get('password')
+        username = ""
         
         
-        if not User.objects.filter(email=email_get).exists():
+     
+        
+        if "@" not in email_get:
+            if not User.objects.filter(username=email_get).exists():
+                messages.error(request, 'User Not Register - Kindly Register')
+                return redirect('register') 
+            
+            
+            username = email_get
+            pass
+        
+        elif "@" in email_get:
             if "@acem.edu.in" not in email_get:
-                messages.error(request, 'Kindly register with a College Mail ID')
-                return redirect('register')
-
-        elif "@" not in email_get and User.objects.filter(username=email_get).exists():
-            print("In username condition")
-
-                    
-        else:           
-            print(email_get, password)
-            username = ''
-            if "@" in email_get:
-                username = User.objects.get(email = email_get).username
+                messages.error(request , "Kindly register with College MailID")
+                return redirect('login')
+            
             else:
-                username = User.objects.get(username = email_get).username
-                
+                if not User.objects.filter(email=email_get).exists():
+                    messages.error(request, 'User Not Register - Kindly Register')
+                    return redirect('register')
+                else:
+                    username = User.objects.get(email = email_get).username
+        
+     
+        if username:          
+            print(email_get, password)
+   
             user = authenticate(username = username, password = password)
             print(user)
             if user is None:

@@ -63,9 +63,6 @@ def data_transfer():
         )
 
 
-
-
-
 def top_students(sem_option, year_option , branch_option):
     # print(sem_option,"In reappear_batch" , year_option  , "In Branch"  , branch_option)
         
@@ -124,43 +121,43 @@ def top_students(sem_option, year_option , branch_option):
     return fig
 
 
-  
-def reapear_batch(year_option , branch_option):
-    # print("In reappear_batch" , year_option , "Branch" , branch_option)
-    
-    objects = chart_data.objects.filter(year=year_option , branch = branch_option)
-    df = pd.DataFrame(data = list(objects.values()))
-     
-    filter_df = df[df['recount']>0]
-   
+def reapear_batch(year_option, branch_option):
+    objects = chart_data.objects.filter(year=year_option, branch=branch_option)
+    df = pd.DataFrame(data=list(objects.values()))
+    filter_df = df[df['recount'] > 0]
     filtered_semester_recounts = filter_df.groupby('semester')['recount'].count().reset_index()
     
-    
-    fig = px.pie(filtered_semester_recounts, values='recount', names='semester', title=f'ReApeares Of {branch_option} Batch {year_option}')
-    
-    fig.update_layout(
-        paper_bgcolor='#f0f0f0',  
-        plot_bgcolor='#f0f0f0',
-        font_color='#333333',    
-        title={
-            'text': f"Recount Of Batch {year_option}",
-            'y':0.9,
-            'x':0.5,
-            'xanchor': 'center',
-            'yanchor': 'top'
-        },
-        legend={
-            'orientation': "h",
-            'yanchor': "bottom",
-            'y': 1,
-            'xanchor': "center",
-            'x': 0.5
-        },
-        autosize=False,  
-        width=556,       
-        height=388, 
+    fig = px.pie(
+        filtered_semester_recounts,
+        values='recount',
+        names='semester',
+        title=f'ReApeares Of {branch_option} Batch {year_option}'
     )
 
+    fig.update_traces(
+        textposition='outside',
+        textinfo='label+value',
+        pull=[0.02] * len(filtered_semester_recounts),
+        hovertemplate="<b>%{label}</b><br>Reappear count: %{value}<br><extra></extra>"
+    )
+    
+    fig.update_layout(
+        paper_bgcolor='#f0f0f0',
+        plot_bgcolor='#f0f0f0',
+        font_color='#333333',
+        title={
+            'text': f"Recount Of Batch {year_option}",
+            'y': 0.95,
+            'x': 1,
+            'xanchor': 'right',
+            'yanchor': 'top'
+        },
+        showlegend=False,
+        margin=dict(t=50, l=80, r=80, b=50),
+        autosize=False,
+        width=556,
+        height=388,
+        clickmode='event'
+    )
 
     return fig
-            

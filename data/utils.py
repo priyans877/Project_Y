@@ -182,13 +182,17 @@ def branch_filter(data):
         if len(data[i])== 9:
             if data[i][:1]=="m" :
                 data[i] = "mba"
-            else :
+            elif "ece" in data[i]:
+                data[i] = "ece" 
+            else:
                 data[i] = "bba"
         if len(data[i])== 11:
             if data[i][:1]=="c" :
                 data[i] = "civil"
+            elif "d" in data[i]:
+                data[i] = "bba_d"
             else :
-                data[i] = "bba_f"
+                data[i] = "bba_f"     
         if len(data[i]) ==13:
             if data[i][:1] == "c":
                 data[i] = 'cse_gen'

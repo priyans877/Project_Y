@@ -24,13 +24,91 @@
         .margins{
             margin-up : -10px;
             
+        }    
+        .custom-error-message {
+            background-color: #f8d7da; /* Red background for errors */
+            color: #721c24; /* Dark red text */
+            border: 1px solid #f5c6cb; /* Light red border */
+            padding: 10px 10px;
+            border-radius: 30px; /* Rounded corners */
+            margin: 5px auto; /* Center the block with auto margins */
+            width: 50%; /* Control the width of the error message */
+            text-align: center; /* Center the text */
+            font-size: 1.2rem;
+            font-family: 'Arial', sans-serif;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: add subtle shadow */
+            opacity: 1;
+            transition: opacity 0.5s ease-out; /* Fade-out transition */
+        }
+    
+        .custom-error-message .alert-icon {
+            margin-right: 10px;
+            font-size: 1rem;
+            color: #721c24;
+        }
+    
+        .custom-error-message button {
+            background: transparent;
+            border: none;
+            color: #721c24;
+            font-size: .9rem;
+        }
+    
+        .custom-error-message button:hover {
+            color: #491217;
+        }
+    
+        /* Optional: Styling for message text */
+        .custom-error-message strong {
+            font-weight: small;
+        }
+    
+        /* Hidden error message (for fade-out effect) */
+        .fade-out {
+            opacity: 0;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Find all error messages
+            const errorMessages = document.querySelectorAll('.custom-error-message');
+    
+            errorMessages.forEach((message) => {
+                // Set timeout to fade out the error message after 2 seconds
+                setTimeout(() => {
+                    message.classList.add('fade-out');
+                    // After the fade-out transition ends, remove the element from the DOM
+                    setTimeout(() => {
+                        message.remove();
+                    }, 500); // Match the transition duration (0.5s)
+                }, 2000); // 2 seconds
+            });
+        });
+    </script>
+    
 </style>
 {% endblock %}
 
 
 {% block scrapform %}
+
+
+{% for message in messages %}
+    <div class="alert-container">
+        <div class="custom-error-message alert alert-dismissible fade show" role="alert">
+            <span class="alert-icon">&#9888;</span> <!-- Warning icon -->
+            <strong>Error:</strong> {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+{% endfor %}
+
+    
 <div class="min-h-full flex items-center justify-center bg-white p-4">
     <div class="bg-white/50 backdrop-blur-lg rounded-3xl shadow-2xl p-6 max-w-4xl w-full border border-white/20 relative overflow-hidden">
         <!-- Mystical Background Elements -->
@@ -44,7 +122,7 @@
             <h2 class="text-4xl font-bold text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-500 animate-text">
                 Result Scraper
             </h2>
-            <p class="text-lg text-gray-600 mt-1">Fill in the details below to scrape results efficiently</p>
+            <p class="text-lg text-gray-600 mt-1">Fill in the details below to scrap results efficiently</p>
         </div>
 
         <!-- Form -->
@@ -104,9 +182,11 @@
                     <option value="bca_gen">BCA (General)</option>
                     <option value="mech">Mechanical Engineering</option>
                     <option value="civil">Civil Engineering</option>
+                    <option value="ece">EC Engineering</option>
                     <option value="mba">MBA</option>
                     <option value="bba_gen">BBA (General)</option>
                     <option value="bba_f">BBA (Finance)</option>
+                    <option value="bba_d">BBA (HR)</option>
                 </select>
             </div>
 
@@ -118,6 +198,17 @@
                 </button>
             </div>
         </form>
+
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+            $('.alert').alert()
+            })
+        </script>
+
     </div>
 </div>
 
@@ -140,4 +231,6 @@
     .animate-float-delay { animation: float-delay 6s ease-in-out infinite; }
     .animate-text { background-size: 200% auto; animation: text 5s linear infinite; }
 </style>
+
+  
 {% endblock %}

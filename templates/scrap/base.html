@@ -164,6 +164,7 @@
         background-color:rgb(106, 141, 176);
     }
     {% block data_html %}{% endblock %}
+    {% block style_feed %}{% endblock %}
     {% block scripts_data %}{% endblock %}
   </style>
 </head>
@@ -204,7 +205,7 @@
           </a>
           <a href="/under_development/oops/" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
             <i class="fas fa-chart-bar"></i>
-            <span>Analytics</span>
+            <span>Marksheet</span>
           </a>
         </div>
 
@@ -212,7 +213,7 @@
           <h2 class="text-sm uppercase tracking-wider opacity-75">Tools</h2>
           <a href="{% url 'feed' %}" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
             <i class="fas fa-screwdriver-wrench"></i>
-            <span>Scrape Data</span>
+            <span>Scrap Results</span>
           </a>
         </div>
 
