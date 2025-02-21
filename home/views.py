@@ -56,7 +56,7 @@ def home_public(request):
                     selector_options.append(f"{branch}-{year}-{sem}")
                     
 
-    branch_option , year_option , semester_option = request.GET.get('selected_category' , selector_options[4]).split("-")
+    branch_option , year_option , semester_option = request.GET.get('selected_category' , 'cse_aiml-21-Third Semester').split("-")
       
     
     fig = top_students(semester_option , year_option , branch_option)
@@ -114,7 +114,7 @@ def dashboard(request):
                     selector_options.append(f"{branch}-{year}-{sem}")
                     
     
-    branch_option , year_option , semester_option = request.GET.get('selected_category' , selector_options[0]).split("-")
+    branch_option , year_option , semester_option = request.GET.get('selected_category' , 'cse_aiml-21-Third Semester').split("-")
     
     fig = top_students(semester_option , year_option , branch_option)
     
