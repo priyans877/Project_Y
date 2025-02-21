@@ -72,10 +72,11 @@ def scraper_feed(request):
             if int(param_start[:2]) - 1 != int(param_batch):
                 messages.error(request, f'Make sure Leet {param_start[:2]} is of Batch {int(param_start[:2])-1}!!')
                 return redirect('feed')
-            
-        if param_start[:2] != param_batch:
-            messages.error(request , "Ensure Roll No and Batch are of same Category")
-            return redirect('feed')
+        
+        if not leet_checker(param_start):   
+            if param_start[:2] != param_batch:
+                messages.error(request , "Ensure Roll No and Batch are of same Category")
+                return redirect('feed')
             
             
         param_end = int(param_end) + 1  # increment to include last roll number
