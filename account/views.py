@@ -64,8 +64,6 @@ def login_page(request):
         username = ""
         
         
-     
-        
         if "@" not in email_get:
             if not User.objects.filter(username=email_get).exists():
                 messages.error(request, 'User Not Register - Kindly Register')
