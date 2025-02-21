@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teacher Dashboard 2025</title>
+  {% block marksheet_title %}{% endblock %}
   <script src="https://unpkg.com/htmx.org"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -12,6 +12,7 @@
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.18);
+
     }
 
     .gradient-bg {
@@ -78,8 +79,14 @@
     }
     
     .main-content {
+      background-color: rgba(84, 87, 91, 0.03); /* Very subtle fade */
+      border-radius: 20px; /* Soft rounded corners */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Soft blending shadow */
+      padding: 10px; /* Add spacing to maintain aesthetics */
+      backdrop-filter: blur(5px); /* Soft blur effect */
       height: calc(100vh - 64px); /* Adjust height to fit within the viewport */
       overflow-y:auto; /* Enable scrolling if content overflows */
+      margin-bottom : 1px;
     }
     
     .stats-cards {
@@ -162,7 +169,7 @@
         transform: translateY(0);
         background-color:rgb(106, 141, 176);
     }
-    
+    {% block mark_style_html %}{% endblock %}
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -179,8 +186,6 @@
         <input type="search" placeholder="Search..." class="px-4 py-2 rounded-full bg-white shadow-sm border focus:outline-none focus:ring-2 focus:ring-purple-500">
         <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
       </div>
-      <h4>{{user_name}}</h4>
-      <img src="{{ user.profile.profile_picture.url }}" alt="Profile" class="h-8 w-8 rounded-full border-2 border-purple-500">
     </div>
   </nav>
 
@@ -191,134 +196,50 @@
       <div class="space-y-6">
         <div class="space-y-2">
           <h2 class="text-sm uppercase tracking-wider opacity-75">Main Menu</h2>
-            <a href="/profile/data/" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
+          <a href="{% url 'home' %}" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="{% url 'get_data' %}" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
             <i class="fas fa-database"></i>
             <span>Datasets</span>
           </a>
-          <a href="{% url 'get_result' %}" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
+          <a href="/result/get-result/" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
             <i class="fas fa-chart-bar"></i>
             <span>Marksheet</span>
-          </a>
-          <a href="/auth/logout/" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
-            <i class="fas fa-home"></i>
-            <span>Log Out</span>
           </a>
         </div>
 
         <div class="space-y-2">
           <h2 class="text-sm uppercase tracking-wider opacity-75">Tools</h2>
-          <a href="/profile/scrap/feed/" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
+          <a href="{% url 'feed' %}" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
             <i class="fas fa-screwdriver-wrench"></i>
-            <span>Scrap Result</span>
+            <span>Scrap Results</span>
           </a>
+
+
+          {% block download_pdf%}{% endblock %}
         </div>
 
         <form action="{% url 'under_dev' %}" method="get">
-          <button type="submit" class="w-full bg-white text-purple-600 rounded-lg py-3 font-medium hover:bg-opacity-90 transition-all">
-              Start New Analysis
-          </button>
-      </form>
+            <button type="submit" class="w-full bg-white text-purple-600 rounded-lg py-3 font-medium hover:bg-opacity-90 transition-all">
+                Start New Analysis
+            </button>
+        </form>
+
+
+        
       </div>
     </div>
 
     <!-- Main Content Area -->
     <div class="flex-1 ml-64 p-8 main-content">
       <!-- Welcome Section -->
-      <div class="mb-1 animate-fade-in">
-        
-        <p class="text-gray-600 mt-2">Here's what's happening with your {{ slogan }}.</p>
-      </div>
+       {% block mark_view %}{% endblock%}
+
+    </div>
       <!-- Stats Cards -->
-      <div class="stats-cards">
-        <!-- Total Students Card -->
-        <div class="stats-card">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-600">Total Result Scraped By You</p>
-              <h3 class="text-2xl font-bold text-gray-800">{{ total_scrap }}</h3>
-            </div>
-            <div class="h-12 w-12 bg-blue-100 rounded-full flex items-center justify-center">
-              <i class="fas fa-id-card text-blue-500"></i>
-            </div>
-          </div>
-          <div class="mt-4">
-            <span class="text-green-500 text-sm">↑ 12%</span>
-            <span class="text-gray-500 text-sm">from last month</span>
-          </div>
-        </div>
-
-        <!-- Active Datasets Card -->
-        <div class="stats-card">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-600">Active Sheets</p>
-              <h3 class="text-2xl font-bold text-gray-800">{{ total_sheets }}</h3>
-            </div>
-            <div class="h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center">
-              <i class="fas fa-database text-purple-500"></i>
-            </div>
-          </div>
-          <div class="mt-4">
-            <span class="text-green-500 text-sm">↑ 3</span>
-            <span class="text-gray-500 text-sm">new this week</span>
-          </div>
-        </div>
-        <!-- Analysis Progress Card -->
-        <div class="stats-card">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm text-gray-600">Active Teachers</p>
-              <h3 class="text-2xl font-bold text-gray-800">{{ total_users }}</h3>
-            </div>
-            <div class="h-12 w-12 bg-green-100 rounded-full flex items-center justify-center">
-              <i class="fas fa-user text-green-500"></i>
-            </div>
-          </div>
-          <div class="mt-4">
-            <span class="text-green-500 text-sm">90% Active users</span>
-            <div class="w-full bg-gray-200 rounded-full h-2">
-            
-              <div class="bg-green-500 h-2 rounded-full" style="width: 90%"></div>
-            </div>
-          </div>
-        </div>
-    </div>
-
-      <!-- Charts Section -->
-      <div class="charts-section">
-        <!-- Form Buttons -->
-        <div class="selector-container">
-          <div style="margin-bottom: 10px; display: flex; gap: 10px;">
-            <select
-              name="selected_category"
-              id="semesterSelector"
-              class="custom-select"
-              {% comment %} hx-include="[name='selected_branch'],[name='selected_year']" {% endcomment %}
-              hx-get="/profile/dashboard/"
-              hx-trigger="change"
-              hx-target="#chart1"
-              hx-swap="innerHTML"
-            >
-            {% for soption in all_options %}
-                <option value="{{ soption }}">{{ soption|upper }}</option>
-            {% endfor %}
-        
-            </select>
-            
-          </div>
-        </div>
-        <!-- Chart Containers -->
-        <div id ="chart1" class="charts-container">
-            {% include "home/data_chart.html" %}
-            {% include 'home/data_chart.html'%} 
-        </div>
-
-      </div>
-
-
-
-    </div>
-  </div>
+      
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 </body>

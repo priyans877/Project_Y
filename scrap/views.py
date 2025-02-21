@@ -102,7 +102,7 @@ driver = None
 def run_scraper(request, start_s, end_s, semester , batch , branch):
     global driver
     
-    # Get current roll number from session
+    #Get curecnt data from cookies storage
     current_state = request.session.get('current_state', {})
     current_roll = current_state.get('roll_no', start_s)  # Use session roll no if exists, else use start_s
     
@@ -110,18 +110,18 @@ def run_scraper(request, start_s, end_s, semester , batch , branch):
         driver = setup_driver()
         driver.get("https://jcboseustymca.co.in/Forms/Student/ResultStudents.aspx")
     
-    # Use current_roll instead of start_s
+    #use current_roll instead of start_s
     roll_no_input = driver.find_element(By.ID, "txtRollNo")
     roll_no_input.clear()
     roll_no_input.send_keys(current_roll)  # Changed from start_s to current_roll
     
     semesters_list = ["First Semester", "Second Semester", "Third Semester", 
                       "Fourth Semester", "Fifth Semester", "Sixth Semester", 
-                      "Seventh Semester", "Eighth Semester"]
+                      "Seventh Semester", "Eigth Semester"]
     dropdown = Select(driver.find_element(By.ID, 'ddlSem'))
     dropdown.select_by_visible_text(semesters_list[int(semester)-1])
     
-    # Get and save captcha
+    # get and save captcha
     driver.execute_script("window.open('');")
     driver.switch_to.window(driver.window_handles[1])
     driver.get("https://jcboseustymca.co.in/Handler/GenerateCaptchaImage.ashx")
@@ -129,7 +129,7 @@ def run_scraper(request, start_s, end_s, semester , batch , branch):
     captcha_element = driver.find_element(By.TAG_NAME, "img")
     screenshot = captcha_element.screenshot_as_png
     
-    # Save to model using current_roll instead of start_s
+    #save to model using current_roll instead of start_s
     form_entry = form_data(
         roll_no=current_roll,  # Changed from start_s to current_roll
         semester=semester,
@@ -149,7 +149,7 @@ def run_scraper(request, start_s, end_s, semester , batch , branch):
     # print(user.profile.image.path)
 
     request.session['current_state'] = {
-        'roll_no': current_roll,  # Changed from start_s to current_roll
+        'roll_no': current_roll,
         'end_roll': end_s,
         'semester': semester,
         'batch' : batch,
@@ -161,7 +161,7 @@ def run_scraper(request, start_s, end_s, semester , batch , branch):
     
     return render(request, 'scrap/result_scrap.html', {
         'form_data': form_entry,
-        'current_roll': current_roll,  # Changed from start_s to 
+        'current_roll': current_roll,  # changed from start_s to 
         'image_url': image_url
     })
 
@@ -358,8 +358,7 @@ def submit_captcha(request):
          
             driver.close()       
                    
-        # Process result page he
-        # Update roll number
+       #updating next roll no in cookies session
         
         next_roll = str(int(current_state['roll_no']) + 1)
         # print("Next New Roll No : ", next_roll)
@@ -369,18 +368,18 @@ def submit_captcha(request):
             driver = None
             return JsonResponse({'status': 'completed'})
         
-        # Update session with new roll number
+        #update session with new roll number
         current_state['roll_no'] = next_roll
         request.session['current_state'] = current_state
         request.session.modified = True  # Force session update
         
-        # Close extra windows and prepare for next roll
+        #close extra windows and prepare for next roll
         driver.switch_to.window(driver.window_handles[1])
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
         
 
-        # Return success with next roll number
+        #return success with next roll number
         return JsonResponse({
             'status': 'success', 
             'next_roll': next_roll,
@@ -399,13 +398,13 @@ def json_trial(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         roll_no = request.POST.get('roll')
-        json_data_str = request.POST.get('json_data')  # Fix the name to match the form
+        json_data_str = request.POST.get('json_data') 
 
         try:
-            # Parse JSON data
+            #parse JSON data
             json_data = json.loads(json_data_str)
             
-            # Save to the database
+            #save to the database
             trail_json_instance = trail_json.objects.create(
                 name=name,
                 roll_no=roll_no,

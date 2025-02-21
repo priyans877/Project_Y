@@ -73,7 +73,7 @@ def excle_convertor(data, customer ,branch , year , semester_s ,category):
     # Write student data
     row = 3
     for student in data:
-        # Write student info
+        #write student info
         print(student["sgpa"] , isinstance(student['sgpa'] , float))
         
         sgpa = float(student['sgpa']) if isinstance(student['sgpa'], (int, float, str)) and str(student['sgpa']).replace('.', '', 1).isdigit() else 0

@@ -29,7 +29,7 @@
             <h2 class="text-4xl font-extrabold text-white bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-yellow-500 animate-text">
                  CAPTCHA Scraping 
             </h2>
-            <p class="text-lg text-gray-200 mt-3">Enter the CAPTCHA to scrape results and proceed to the next roll number.</p>
+            <p class="text-lg text-gray-200 mt-3">Enter the CAPTCHA to scrap results and proceed to the next roll number.</p>
         </div>
 
         <!-- Scraping Section -->
@@ -48,7 +48,7 @@
                 {% csrf_token %}
                 <div>
                     <label for="captcha_value" class="block text-lg font-medium text-gray-300">Enter The Captcha</label>
-                    <input type="text" class="w-full px-4 py-2 bg-white/10 text-black rounded-lg border border-gray-400/30 placeholder-gray-400 shadow-lg focus:ring-4 focus:ring-pink-500 focus:outline-none transition duration-300" id="captcha_value" name="captcha_value" placeholder="Enter CAPTCHA" required>
+                    <input type="text" autofocus class="w-full px-4 py-2 bg-white/10 text-black rounded-lg border border-gray-400/30 placeholder-gray-400 shadow-lg focus:ring-4 focus:ring-pink-500 focus:outline-none transition duration-300" id="captcha_value" name="captcha_value" placeholder="Enter CAPTCHA" required>
                 </div>
                 <button type="submit" class="w-full py-3 bg-gradient-to-r from-pink-500 to-yellow-500 text-white font-bold rounded-full shadow-lg hover:opacity-90 hover:scale-105 transform transition duration-300">
                     Submit

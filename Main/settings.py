@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'account.apps.AccountConfig',
     'oops.apps.OopsConfig',
+    'marksheet.apps.MarksheetConfig',
     'storages',
 ]
 

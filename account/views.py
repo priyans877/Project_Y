@@ -85,7 +85,7 @@ def login_page(request):
                     messages.error(request, 'User Not Register - Kindly Register')
                     return redirect('register')
                 else:
-                    username = User.objects.get(email = email_get).username
+                    username = User.objects.get(email__iexact = email_get).username
         
      
         if username:          

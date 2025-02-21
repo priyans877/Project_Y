@@ -32,7 +32,8 @@ urlpatterns = [
     path('profile/data/', include('data.urls'), name="data"),
     path('profile/scrap/', include('scrap.urls'), name="scrap"),
     path('api/', include('api.urls'), name="api"),
-    path('under_development/', include('oops.urls'), name="under")
+    path('under_development/', include('oops.urls'), name="under"),
+    path('result/', include('marksheet.urls'), name="marksheet")
 ]
 
 

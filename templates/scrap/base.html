@@ -12,6 +12,7 @@
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.18);
+
     }
 
     .gradient-bg {
@@ -78,6 +79,11 @@
     }
     
     .main-content {
+      background-color: rgba(84, 87, 91, 0.03); /* Very subtle fade */
+      border-radius: 20px; /* Soft rounded corners */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); /* Soft blending shadow */
+      padding: 8px; /* Add spacing to maintain aesthetics */
+      backdrop-filter: blur(5px); /* Soft blur effect */
       height: calc(100vh - 64px); /* Adjust height to fit within the viewport */
       overflow-y:auto; /* Enable scrolling if content overflows */
       margin-bottom : 1px;
@@ -203,7 +209,7 @@
             <i class="fas fa-database"></i>
             <span>Datasets</span>
           </a>
-          <a href="/under_development/oops/" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
+          <a href="/result/get-result/" class="sidebar-link flex items-center space-x-3 px-4 py-3 text-white">
             <i class="fas fa-chart-bar"></i>
             <span>Marksheet</span>
           </a>
@@ -226,7 +232,7 @@
     </div>
 
     <!-- Main Content Area -->
-    <div class="flex-1 ml-64 p-0 main-content grayscale">
+    <div class="flex-1 ml-64 p-8 main-content">
       <!-- Welcome Section -->
        {% block scrapform %}{% endblock %}
        {% block data_view %}{% endblock%}
