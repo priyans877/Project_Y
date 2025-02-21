@@ -56,7 +56,7 @@ def home_public(request):
                     selector_options.append(f"{branch}-{year}-{sem}")
                     
 
-    branch_option , year_option , semester_option = request.GET.get('selected_category' , selector_options[0]).split("-")
+    branch_option , year_option , semester_option = request.GET.get('selected_category' , selector_options[4]).split("-")
       
     
     fig = top_students(semester_option , year_option , branch_option)
@@ -66,7 +66,7 @@ def home_public(request):
     fig_html2 = fig2.to_html(full_html = False , config={"displayModeBar": False})
     fig_html = fig.to_html(full_html=False , config={"displayModeBar": False})
     
-    
+    print(set(selector_options))
 
     message_info = {
         'total_scrap' : len(result_count),
@@ -74,7 +74,7 @@ def home_public(request):
         'total_sheets' : len(total_sheets),
         'plot_div' : fig_html,
         'plot_div2' : fig_html2,
-        'all_options' : set(selector_options[1:]),
+        'all_options' : sorted(set(selector_options)),
         'user_name' :"Welcome User",
         'slogan' : "Dataset" if request.user.id!=None else f"Results",
         
