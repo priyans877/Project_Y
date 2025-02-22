@@ -1,4 +1,4 @@
-# 📌 Django Marksheet Management & Student Auto-Fill System
+# 📌 Aravali Dashboard & Academic Report System
 
 ![Project Banner](path/to/your/banner-image.png)
 
