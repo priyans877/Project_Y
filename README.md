@@ -4,7 +4,7 @@
 
 ## 📖 Overview
 
-The **Django Marksheet Management & Student Auto-Fill System** is a web-based application that streamlines the process of filling student details and generating marksheets.
+The **Aravali Dashboard & Academic Report System** is a web-based application that streamlines the process of filling student details and generating marksheets.
 
 ### 🔹 Key Features
 
