@@ -1,163 +1,189 @@
-Aravali DashBoard & Marksheet System 🏫🎓
+# 📌 Django Marksheet Management & Student Auto-Fill System
 
+![Project Banner](path/to/your/banner-image.png)
 
-📌 Overview
-The Django AutoCAPTCHA & Marksheet System is an intelligent web application that streamlines the student details entry process by automatically filling them using live web scraping. It also features a marksheet generation system that provides detailed academic insights, including semester results, top subject achievements, and expected CGPA calculations.
+## 📖 Overview
 
-The system aims to eliminate manual errors, save time, and provide valuable academic analytics. It is a cost-effective and lightweight solution, deployed on a simple Ubuntu server.
+The **Django Marksheet Management & Student Auto-Fill System** is a web-based application that streamlines the process of filling student details and generating marksheets.
 
-🎯 Key Features
-✅ Automated Student Detail Retrieval
-Enter a CAPTCHA code, and the system scrapes student details from an external database in real time.
-Uses Selenium and BeautifulSoup for web automation.
-✅ Marksheet Generator
-Displays semester-wise scores and subject performance insights.
-Automatically predicts missing CGPA based on past scores.
-Highlights top-performing subjects and areas for improvement.
-✅ Data Storage & Visualization
-Stores student details in an online database.
-Graphical dashboards to analyze student performance.
-Supports data export and reports generation.
-✅ Secure & User-Friendly
-Admin authentication system for security.
-Simple UI designed for teachers and admins.
-Deployed on an Ubuntu server without Nginx, ensuring easy maintenance.
-🛠️ Technology Stack
-Technology	Description
-Django	Backend framework for handling authentication, database operations, and logic.
-Python (BeautifulSoup, Selenium)	Used for live web scraping to fetch student details.
-HTML, CSS, JavaScript (Bootstrap)	Frontend for building a user-friendly UI.
-SQLite / PostgreSQL	Database for storing student information and marksheets.
-Matplotlib, Plotly	Data visualization for student performance analysis.
-Ubuntu Server	Deployment platform for cost-effective hosting.
-🚀 Project Architecture
-php
-Copy
-Edit
-📂 Django-AutoCAPTCHA
-│── 📂 app/                  # Main application logic
+### 🔹 Key Features
+
+- **CAPTCHA-based Auto-Fill**: Users enter a CAPTCHA manually, and the system fetches student details using live web scraping.
+- **Marksheet Generation**: Displays semester results, subject achievements, and predicts CGPA.
+- **Data Storage & Visualization**: Maintains a secure database with analytics dashboards.
+- **Simple Deployment**: Hosted on an Ubuntu server for efficient and cost-effective management.
+
+## 🚀 Features
+
+✅ **Manual CAPTCHA Entry & Auto-Fill**
+- Users enter a CAPTCHA, and the system extracts student details via web scraping.
+- Uses **Selenium & BeautifulSoup** for automation.
+
+✅ **Comprehensive Marksheet Generation**
+- Displays **semester-wise scores, top subjects, and CGPA predictions**.
+- Provides insights into **best and weak subjects**.
+
+✅ **Data Storage & Visualization**
+- Stores student records in a **secure online database**.
+- **Graphical analytics dashboard** using **Matplotlib & Plotly**.
+- Supports **exporting reports** for academic analysis.
+
+✅ **User Authentication & Security**
+- **Admin authentication system** for secure data management.
+- **User-friendly interface** for teachers and administrators.
+
+✅ **Easy Deployment**
+- **Runs on Ubuntu server** without Nginx, ensuring hassle-free maintenance.
+
+## 🛠️ Tech Stack
+
+| Technology       | Description |
+|-----------------|------------|
+| **Django**      | Backend framework for handling logic & authentication. |
+| **Python (Selenium, BeautifulSoup)** | Used for scraping student details from external sources. |
+| **HTML, CSS, JavaScript (Bootstrap)** | Frontend UI for an intuitive user experience. |
+| **SQLite / PostgreSQL** | Stores student data & marksheets. |
+| **Matplotlib, Plotly** | Data visualization & analytics dashboard. |
+| **Ubuntu Server** | Deployment platform for cost-effective hosting. |
+
+## 📂 Project Structure
+
+```
+📂 Django-Marksheet-System
+│── 📂 app/                  # Core application logic
 │── 📂 models/               # Database models
-│── 📂 utils/                # CAPTCHA handling & scraping logic
-│── 📂 scripts/              # Testing and deployment scripts
-│── 📂 templates/            # Frontend templates
+│── 📂 utils/                # Web scraping logic
+│── 📂 scripts/              # Testing & deployment scripts
+│── 📂 templates/            # HTML templates
 │── 📂 static/               # CSS, JavaScript, images
-│── 📜 requirements.txt      # Required dependencies
-│── 📜 README.md             # Project documentation
+│── 📜 requirements.txt      # Dependencies
+│── 📜 README.md             # Documentation
 │── 📜 manage.py             # Django project entry point
-📥 Installation & Setup
-Follow these steps to set up the project on your local machine:
+```
 
-1️⃣ Clone the Repository
-bash
-Copy
-Edit
-git clone https://github.com/priyans877/Django-AutoCAPTCHA.git
-cd Django-AutoCAPTCHA
-2️⃣ Create a Virtual Environment
-bash
-Copy
-Edit
+## 📥 Installation & Setup
+
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/priyans877/Django-Marksheet-System.git
+cd Django-Marksheet-System
+```
+
+### 2️⃣ Create a Virtual Environment
+```bash
 python -m venv venv
-source venv/bin/activate  # For Windows: venv\Scripts\activate
-3️⃣ Install Dependencies
-bash
-Copy
-Edit
+source venv/bin/activate  # Windows: venv\Scripts\activate
+```
+
+### 3️⃣ Install Dependencies
+```bash
 pip install -r requirements.txt
-4️⃣ Run Database Migrations
-bash
-Copy
-Edit
+```
+
+### 4️⃣ Run Database Migrations
+```bash
 python manage.py migrate
-5️⃣ Start the Server
-bash
-Copy
-Edit
+```
+
+### 5️⃣ Start the Server
+```bash
 python manage.py runserver
-🚀 Now, open http://127.0.0.1:8000/ in your browser!
+```
+✅ **Now, open [http://127.0.0.1:8000/](http://127.0.0.1:8000/) in your browser!**
 
-🖥️ Usage Guide
-1️⃣ Login to Admin Dashboard
-Visit /admin to log in as a teacher or admin.
-Manage student details and view previous marksheets.
-2️⃣ Auto-Fill Student Details
-Enter the CAPTCHA code, and the system will fetch student details automatically.
-3️⃣ Generate Marksheet
-View semester-wise results and top-performing subjects.
-Predict CGPA if it is missing.
-4️⃣ Visualize Data
-Use the dashboard to analyze student performance trends.
-📸 Screenshots & Demo
-🔹 Login Page
+## 🖥️ Usage Guide
 
-🔹 CAPTCHA Input & Auto-Fill
+1️⃣ **Login to Admin Panel**
+- Visit `/admin`, log in as a teacher/admin.
+- Manage student records and review marksheets.
 
-🔹 Marksheet Generation
+2️⃣ **Enter CAPTCHA & Fetch Student Details**
+- Input CAPTCHA manually.
+- System scrapes **name, roll number, and course details**.
 
-🔹 Data Visualization Dashboard
+3️⃣ **Generate Marksheet & Insights**
+- View **semester results, CGPA prediction, & top subjects**.
+- Identify strengths & improvement areas.
 
-🚀 Deployment
-🔹 Running on Ubuntu Server
-bash
-Copy
-Edit
-# Install required dependencies
+4️⃣ **Data Visualization Dashboard**
+- View **graphs & analytics** for student performance trends.
+
+## 📸 Screenshots & Demo
+
+| Feature | Screenshot |
+|---------|-----------|
+| **Login Page** | ![Login](path/to/login-image.png) |
+| **CAPTCHA Entry & Auto-Fill** | ![CAPTCHA](path/to/captcha-image.png) |
+| **Marksheet Generation** | ![Marksheet](path/to/marksheet-image.png) |
+| **Data Visualization Dashboard** | ![Dashboard](path/to/dashboard-image.png) |
+
+## 🚀 Deployment on Ubuntu Server
+
+### 1️⃣ Install Required Dependencies
+```bash
 sudo apt update && sudo apt install python3-pip python3-venv
+```
 
-# Clone the repository
-git clone https://github.com/priyans877/Django-AutoCAPTCHA.git
-cd Django-AutoCAPTCHA
+### 2️⃣ Clone the Repository
+```bash
+git clone https://github.com/priyans877/Django-Marksheet-System.git
+cd Django-Marksheet-System
+```
 
-# Set up virtual environment
+### 3️⃣ Setup Virtual Environment
+```bash
 python3 -m venv venv
 source venv/bin/activate
+```
 
-# Install dependencies
+### 4️⃣ Install Dependencies
+```bash
 pip install -r requirements.txt
+```
 
-# Run Django migrations
+### 5️⃣ Run Migrations & Start Server
+```bash
 python manage.py migrate
-
-# Start the server
 python manage.py runserver 0.0.0.0:8000
-🎉 Your project is now live on the server!
+```
+🎉 **Your project is now live on the server!**
 
-🛠 Troubleshooting
-🔹 Database Errors
-bash
-Copy
-Edit
+## 🛠 Troubleshooting
+
+🔹 **Database Errors**
+```bash
 python manage.py makemigrations
 python manage.py migrate
-🔹 Selenium Not Working?
-Ensure Google Chrome & ChromeDriver are installed correctly.
+```
 
-🔹 Can't Access Admin?
-bash
-Copy
-Edit
+🔹 **Selenium Not Working?**
+Ensure **Google Chrome & ChromeDriver** are installed correctly.
+
+🔹 **Forgot Admin Credentials?**
+```bash
 python manage.py createsuperuser
+```
 Then follow the prompts to create a new admin user.
 
-🎯 Future Roadmap
-✔️ PDF Export for Marksheet Reports
-✔️ AI-based Student Performance Prediction
-✔️ Mobile-Friendly UI
-✔️ Integration with School Databases
+## 🎯 Future Roadmap
 
-🤝 Contributors
-👤 Priyanshu Choubey
+✔️ **PDF Export for Marksheet Reports**
+✔️ **AI-based Student Performance Prediction**
+✔️ **Mobile-Friendly UI**
+✔️ **Integration with School Databases**
 
-GitHub: @priyans877
-LinkedIn: Priyanshu Choubey
-🙌 Open to contributions! Feel free to submit a pull request or raise an issue.
+## 🤝 Contributors
 
-📜 License
-This project is licensed under the MIT License. See LICENSE for details.
+👤 **Priyanshu Choubey**  
+- **GitHub**: [@priyans877](https://github.com/priyans877)  
+- **LinkedIn**: [Priyanshu Choubey](https://www.linkedin.com/in/priyanshu-choubey/)  
 
-🎯 Final Thoughts
-🚀 This project is designed to simplify the student marksheet process with AI-powered automation. It not only saves time but also provides deep academic insights using visual dashboards.
+🙌 **Contributions are welcome!** Feel free to **submit a pull request** or raise an issue.
 
-💡 If you like this project, don’t forget to ⭐ star the repository on GitHub!
+## 📜 License
+This project is licensed under the **MIT License**. See `LICENSE` for details.
 
-🎯 Would you like any modifications or enhancements? Let me know! 🚀🔥
+## ⭐ Final Thoughts
+🚀 This project **simplifies student data management** by automating **detail fetching and marksheet generation**.  
+💡 If you **find this useful, don't forget to ⭐ star the repo on GitHub!**
+
