@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .decorators import unauthorised
 from .models import Profile , AuthEmail
+import re
 
 
 # Create your views here.
@@ -12,6 +13,8 @@ from .models import Profile , AuthEmail
 
 @unauthorised
 def register_page(request):
+    special_char = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         firstname = request.POST.get('firstname')
@@ -22,7 +25,7 @@ def register_page(request):
         print(username)
         print(password ,confirm_pass)
         user = User.objects.filter(username = username)
-  
+
         
         if confirm_pass== password:
 
@@ -35,12 +38,21 @@ def register_page(request):
 
             elif not AuthEmail.objects.filter(emails=email.lower()).exists():
                 messages.error(request,"You'r not a Teacher")
+                
+            elif len(password) >8:
+                messages.error(request , "Password must be greater then 8 characters")
+            
+            elif password.islower() and "1234567890" not in password:
+                messages.error(request , "Password must Numbers and one Capital letter")
+            
+            elif special_char.search(password) == None:
+                messages.error(request , "Password must contain one special character")
             
             else:
                 user = User.objects.create(
                     username = username,
                     first_name = firstname,
-                    email = email
+                    email = email.lower()
                 )
                 
                 user.set_password(password)
@@ -83,7 +95,7 @@ def login_page(request):
                     messages.error(request, 'User Not Register - Kindly Register')
                     return redirect('register')
                 else:
-                    username = User.objects.get(email__iexact = email_get).username
+                    username = User.objects.get(email__iexact = email_get.lower()).username
         
      
         if username:          
